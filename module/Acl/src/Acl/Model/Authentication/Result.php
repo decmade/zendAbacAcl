@@ -56,7 +56,7 @@ class Result extends ZendResult
 	 */
 	public function addMessage($value)
 	{
-		$this->message[] = (string)$value;
+		$this->messages[] = (string)$value;
 		return $this;
 	}
 }
