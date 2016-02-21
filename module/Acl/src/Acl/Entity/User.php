@@ -141,7 +141,7 @@ class User extends AbstractEntity
 	 */
 	public function getAttributes()
 	{
-		return $this->attributes;
+		return $this->attributes->toArray();
 	}
 
 	/**
@@ -162,7 +162,7 @@ class User extends AbstractEntity
 	 */
 	public function getSessions()
 	{
-		return $this->sessions;
+		return $this->sessions->toArray();
 	}
 
 }
