@@ -2,6 +2,7 @@
 namespace Acl\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use \DateTime;
 
 /**
  * @ORM\Entity
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Session extends AbstractEntity
 {
 	/**
-	 * @ORM\Column(type="string", length=15)
+	 * @ORM\Column(type="string", length=15, nullable=true)
 	 *
 	 * @var string
 	 */
@@ -70,6 +71,26 @@ class Session extends AbstractEntity
 	public function setExpires(DateTime $value)
 	{
 		$this->expires = $value;
+		return $this;
+	}
+
+	/**
+	 * @return User
+	 */
+	public function getUser()
+	{
+		return $this->user;
+	}
+
+	/**
+	 *
+	 * @param User $user
+	 *
+	 * @return $this
+	 */
+	public function setUser(User $user)
+	{
+		$this->user = $user;
 		return $this;
 	}
 

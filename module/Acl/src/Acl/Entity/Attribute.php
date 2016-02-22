@@ -73,5 +73,25 @@ class Attribute extends AbstractEntity
 		return $this;
 	}
 
+	/**
+	 * @return User
+	 */
+	public function getUser()
+	{
+		return $this->user;
+	}
+
+	/**
+	 *
+	 * @param User $user
+	 *
+	 * @return $this
+	 */
+	public function setUser(User $user)
+	{
+		$this->user = $user;
+		return $this;
+	}
+
 
 }

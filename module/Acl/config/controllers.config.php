@@ -1,9 +1,19 @@
 <?php
 return array(
 	'invokables' => array(
-		'Acl\Controller\Index' => 'Acl\Controller\IndexController'
 	),
 	'factories' => array(
+		'Acl\Controller\Index' => function($serviceLocator) {
+			$sm = $serviceLocator->getServiceLocator();
+
+			$authenticationService = $sm->get('Acl\Authentication\Service');
+
+			$controller = new \Acl\Controller\IndexController();
+			$controller
+				->setAuthenticationService($authenticationService);
+
+			return $controller;
+		},
 
 	),
 );

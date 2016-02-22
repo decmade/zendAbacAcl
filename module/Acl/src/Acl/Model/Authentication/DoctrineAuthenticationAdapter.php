@@ -177,6 +177,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 	private function getAuthenticationTests()
 	{
 		return array(
+
 			/*
 			 * test for empty user identity
 			 */
@@ -195,8 +196,9 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 
 				return $result;
 			},
+
 			/*
-			 * test for empty use credntial
+			 * test for empty user credntial
 			 */
 			function ($adapter) {
 				$credential = $adapter->getCredential();
@@ -213,6 +215,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 
 				return $result;
 			},
+
 			/*
 			 * test for a valid user
 			 */
@@ -224,7 +227,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				/*
 				 * find active user with this identity
 				 */
-				$users = $em->getRepository('Acl\Entity\User', array(
+				$users = $em->getRepository('Acl\Entity\User')->findBy(array(
 					'identity' => $identity,
 					'status' => 1,
 					'removed' => null,
@@ -233,7 +236,8 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				if ( count($users) == 0 ) {
 					$result
 						->setCode($result::FAILURE_IDENTITY_NOT_FOUND)
-						->addMessage('Invalid Username Or Password');
+						->addMessage('Invalid Username Or Password')
+						->addMessage('User Not Found');
 				} else {
 					$result
 						->setCode($result::SUCCESS);
@@ -241,6 +245,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 
 				return $result;
 			},
+
 			/*
 			 * actually authenticate the user against
 			 * user database
@@ -258,7 +263,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				/*
 				 * find active user with this identity
 				 */
-				$users = $em->getRepository('Acl\Entity\User', array(
+				$users = $em->getRepository('Acl\Entity\User')->findBy(array(
 					'identity' => $identity,
 					'status' => 1,
 					'removed' => null,
@@ -274,11 +279,11 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 					 * then return a successful result with the user
 					 * identity populated
 					 */
-					if ($user->checkCredential($credential) {
+					if ($user->checkCredential($credential)) {
 						$result
 							->setIdentity($user->getId()) // go with the database's surrogate key for information hiding
 							->setCode($result::SUCCESS)
-							->addMessage(sprintf("User %s Has Been Authenticated Successfully", $identity);
+							->addMessage(sprintf("User %s Has Been Authenticated Successfully", $identity) );
 
 						return $result;
 					}

@@ -55,8 +55,11 @@ class User extends AbstractEntity
 	 */
 	public function __construct()
 	{
+		parent::__construct();
+
 		$this->attributes = new ArrayCollection();
 		$this->sessions = new ArrayCollection();
+		$this->status = self::STATUS_ACTIVE;
 	}
 
 	/**
@@ -86,8 +89,7 @@ class User extends AbstractEntity
 	 */
 	public function checkCredential($value)
 	{
-		$hash = $this->credential;
-		return password_verify($value, $hash);
+		return password_verify($value, $this->credential);
 	}
 
 	/**
@@ -133,6 +135,7 @@ class User extends AbstractEntity
 	public function addAttribute(Attribute $attribute)
 	{
 		$this->attributes[] = $attribute;
+		$attribute->setUser($this);
 		return $this;
 	}
 
@@ -144,17 +147,18 @@ class User extends AbstractEntity
 		return $this->attributes->toArray();
 	}
 
-	/**
-	 *
-	 * @param Session $session
-	 *
-	 * @return $this
-	 */
-	public function addSession(Session $session)
-	{
-		$this->sessions[] = $session;
-		return $this;
-	}
+// 	/**
+// 	 *
+// 	 * @param Session $session
+// 	 *
+// 	 * @return $this
+// 	 */
+// 	public function addSession(Session $session)
+// 	{
+// 		$this->sessions[] = $session;
+// 		$session->setUser($this);
+// 		return $this;
+// 	}
 
 	/**
 	 *
