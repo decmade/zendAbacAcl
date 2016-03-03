@@ -114,7 +114,7 @@ class DoctrineSessionStorage implements StorageInterface
 					/*
 					 * the session has a removed date value
 					 *
-					 * this indicates that an logout action has
+					 * this indicates that a logout action has
 					 * been applied to the session
 					 */
 					return true;
@@ -371,6 +371,7 @@ class DoctrineSessionStorage implements StorageInterface
 		 */
 		return '0.0.0.0';
 	}
+
 	/**
 	 *
 	 * get dependencies configuration for DependentObjectTrait

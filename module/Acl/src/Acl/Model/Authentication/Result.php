@@ -9,7 +9,7 @@ use Zend\Authentication\Result as ZendResult;
  * the object included with the framework only allows you
  * to set properties during instantiation
  *
- * this project is going to use the prototyp method
+ * this project is going to use the prototype method
  * so that we can take advantage of the dependency
  * injection techniques
  *

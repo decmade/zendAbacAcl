@@ -6,6 +6,7 @@ return array(
 	'invokables' => array(
 		'Acl\Authentication\Result' => 'Acl\Model\Authentication\Result',
 		'Acl\Entity\Session' => 'Acl\Entity\Session',
+		'Acl\Authorization\AttributePattern' => 'Acl\Model\Authorization\AttributePattern',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -55,6 +56,24 @@ return array(
 				->setStorage($storage);
 
 			return $service;
+		},
+		'Acl\Authorization\AttributePattern\Factory' => function($sm) {
+			$prototype = $sm->get('Acl\Authorization\AttributePattern');
+
+			$factory = new \Acl\Model\Authorization\AttributePatternFactory();
+			$factory
+				->setPrototype($prototype);
+
+			return $factory;
+		},
+		'Acl\Authorization\AttributePatternSetConfigParser' => function($sm) {
+			$factory = $sm->get('Acl\Authorization\AttributePattern\Factory');
+
+			$parser = new \Acl\Model\Authorization\AttributePatternSetConfigParser();
+			$parser
+				->setAttributePatternFactory($factory);
+
+			return $parser;
 		},
 	),
 

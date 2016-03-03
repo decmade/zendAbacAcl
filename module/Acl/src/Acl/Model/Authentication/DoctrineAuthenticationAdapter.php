@@ -302,7 +302,8 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				 * i leave this up to the developer at this revision to implement based on
 				 * their specific business rules. you would have to make this class
 				 * event aware and add the event manager as a dependency i
-				 * would imagine.
+				 * would imagine. Zend makes it easy enough by using the
+				 * EventManagerAwareTrait
 				 */
 				$result
 					->setCode($result::FAILURE_CREDENTIAL_INVALID)

@@ -38,12 +38,26 @@ class IndexController extends AbstractActionController
     public function indexAction()
     {
 
-    	$user = $this->getServiceLocator()->get('Acl\Entity\Manager')->getRepository('Acl\Entity\User')->find(2);
+    	$sm = $this->getServiceLocator();
 
-		$result = $this->authenticationTest();
+    	$em = $sm->get('Acl\Entity\Manager');
+    	$user = $em->getRepository('Acl\Entity\User')->find(2);
+
+    	$result = $this->authenticationTest();
+
+    	$router = $sm->get('Router');
+    	$request = $this->getRequest();
+    	$attributePatternSetConfig = $router->match($request)->getParam('attributePatternSetConfig');
+		$parser = $sm->get('Acl\Authorization\AttributePatternSetConfigParser');
+		$attributePatterns = $parser->parse($attributePatternSetConfig);
+
 
         return array(
-        	'test' => $result,
+        	'test' => array(
+        		'authenticationTest' => $result,
+        		'attributePatternSetConfig' => $attributePatternSetConfig,
+        		'attributePatternSet' => $attributePatterns,
+        	),
         );
     }
 
