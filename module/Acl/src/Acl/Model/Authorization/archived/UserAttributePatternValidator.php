@@ -16,12 +16,6 @@ class UserAttributePatternValidator
 
 	/**
 	 *
-	 * @var AttributePatternFactory
-	 */
-	private $attributePatternFactory;
-
-	/**
-	 *
 	 * @var CaseSensitivity
 	 */
 	private $caseSensitivity;
@@ -33,17 +27,6 @@ class UserAttributePatternValidator
 	public function setUser(User $user)
 	{
 		$this->user = $user;
-		return $this;
-	}
-
-	/**
-	 *
-	 * @param AttributePatternFactory $factory
-	 * @return $this
-	 */
-	public function setAttributePatternFactory(AttributePatternFactory $factory)
-	{
-		$this->attributePatternFactory = $factory;
 		return $this;
 	}
 
@@ -65,7 +48,6 @@ class UserAttributePatternValidator
 		 */
 		$this->checkDependencies();
 
-		$attributePatterns = $this->parseSet($patternSet);
 
 	}
 
@@ -89,10 +71,6 @@ class UserAttributePatternValidator
 			array(
 				'name' => 'Acl\Model\Entity\User',
 				'object' => $this->user,
-			),
-			array(
-				'name' => 'Acl\Model\Authorization\AttributePatternFactory',
-				'object' => $this->attributePatternFactory,
 			),
 			array(
 				'name' => 'Acl\Model\Authorization\CaseSensitivity',

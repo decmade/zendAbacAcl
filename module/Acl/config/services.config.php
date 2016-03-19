@@ -57,23 +57,32 @@ return array(
 
 			return $service;
 		},
-		'Acl\Authorization\AttributePattern\Factory' => function($sm) {
-			$prototype = $sm->get('Acl\Authorization\AttributePattern');
+// 		'Acl\Authorization\AttributePattern\Factory' => function($sm) {
+// 			$prototype = $sm->get('Acl\Authorization\AttributePattern');
 
-			$factory = new \Acl\Model\Authorization\AttributePatternFactory();
-			$factory
-				->setPrototype($prototype);
+// 			$factory = new \Acl\Model\Authorization\AttributePatternFactory();
+// 			$factory
+// 				->setPrototype($prototype);
 
-			return $factory;
-		},
-		'Acl\Authorization\AttributePatternSetConfigParser' => function($sm) {
-			$factory = $sm->get('Acl\Authorization\AttributePattern\Factory');
+// 			return $factory;
+// 		},
+// 		'Acl\Authorization\AttributePatternSetConfigParser' => function($sm) {
+// 			$factory = $sm->get('Acl\Authorization\AttributePattern\Factory');
 
-			$parser = new \Acl\Model\Authorization\AttributePatternSetConfigParser();
-			$parser
-				->setAttributePatternFactory($factory);
+// 			$parser = new \Acl\Model\Authorization\AttributePatternSetConfigParser();
+// 			$parser
+// 				->setAttributePatternFactory($factory);
 
-			return $parser;
+// 			return $parser;
+// 		},
+		'Acl\UserAttributeValidator' => function($sm) {
+			$em = $sm->get('Acl\EntityManager');
+
+			$validator = new \Acl\Model\Authorization\UserAttributeValidator();
+			$validator
+				->setEntityManager($em);
+
+			return $validator;
 		},
 	),
 

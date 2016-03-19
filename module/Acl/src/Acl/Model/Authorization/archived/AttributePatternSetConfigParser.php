@@ -25,6 +25,12 @@ class AttributePatternSetConfigParser
 	}
 
 
+	/**
+	 * parses the attribute pattern config array
+	 *
+	 * @param array $set
+	 * @return array
+	 */
 	public function parse(array $set)
 	{
 		/*

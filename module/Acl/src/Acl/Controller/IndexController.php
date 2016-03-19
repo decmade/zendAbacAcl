@@ -47,16 +47,29 @@ class IndexController extends AbstractActionController
 
     	$router = $sm->get('Router');
     	$request = $this->getRequest();
-    	$attributePatternSetConfig = $router->match($request)->getParam('attributePatternSetConfig');
-		$parser = $sm->get('Acl\Authorization\AttributePatternSetConfigParser');
-		$attributePatterns = $parser->parse($attributePatternSetConfig);
+    	$validator = $sm->get('Acl\UserAttributeValidator');
+    	$accessDqlWhereClause = $router->match($request)->getParam('accessDqlWhereClause');
 
+    	$validator->validate($result['identity'], $accessDqlWhereClause);
+
+    	$isValid = $validator->validate($result['identity'], $accessDqlWhereClause);
+    	$cachedAttributes = $validator->getCachedAttributes();
+    	$attributesFound = array();
+
+    	foreach($cachedAttributes as $attribute)
+    	{
+    		$attributesFound[] = array(
+    			'name' => $attribute->getName(),
+    			'value' => $attribute->getValue(),
+    		);
+    	}
 
         return array(
         	'test' => array(
         		'authenticationTest' => $result,
-        		'attributePatternSetConfig' => $attributePatternSetConfig,
-        		'attributePatternSet' => $attributePatterns,
+        		'accessDqlWhereClause' => $accessDqlWhereClause ,
+        		'hasAccess' => ($isValid) ? 'YES' : 'NO',
+        		'attributesFound' => $attributesFound,
         	),
         );
     }
