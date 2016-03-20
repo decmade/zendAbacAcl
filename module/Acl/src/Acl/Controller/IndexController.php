@@ -74,6 +74,9 @@ class IndexController extends AbstractActionController
         );
     }
 
+    /**
+     * the logout action and feedback
+     */
     public function logoutAction()
     {
 		/*
@@ -84,6 +87,10 @@ class IndexController extends AbstractActionController
     	$authService = $this->authenticationService;
 
     	$authService->clearIdentity();
+
+    	return array(
+
+    	);
     }
 
     private function authenticationTest()
@@ -93,18 +100,39 @@ class IndexController extends AbstractActionController
     	$authService = $sm->get('Acl\Authentication\Service');
     	$authAdapter = $sm->get('Acl\Authentication\Adapter');
 
-    	$authAdapter
-    		->setIdentity('dev')
-    		->setCredential('testPass');
-
     	if ($authService->hasIdentity()) {
+    		$identity = $authService->getIdentity();
+
     		return array(
-    			'identity' => $authService->getIdentity(),
+    			'identity' => $identity,
+    			'messages' => array(
+    				sprintf("User ID[%s] already logged in.", $identity),
+    			),
     		);
     	} else {
-    		return $authService->authenticate($authAdapter);
+    		$authAdapter
+	    		->setIdentity('dev')
+	    		->setCredential('testPass');
+    		$result = $authService->authenticate($authAdapter);
+
+    		if ($result->getCode() == $result::SUCCESS) {
+    			$identity = $authService->getIdentity();
+
+	    		return array(
+	    			'identity' => $identity,
+	    			'messages' => array(
+	    				sprintf("User ID[%s] successfully logged in.", $identity),
+	    			),
+	    		);
+    		} else {
+    			return array(
+    				'identity' => '',
+    				'messages' => $authService->getMessages(),
+    			);
+    		}
     	}
 
+    	return $output;
     }
 
     private function testUserCreation()

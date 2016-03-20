@@ -1,4 +1,14 @@
 <?php
+$aclAccessDql = array(
+	array(
+		"a.name = 'admin' AND a.value = '1'",
+		"a.name = 'sitecode' AND a.value LIKE '74%'",
+	),
+	array(
+		"a.name = 'developer' AND a.value = '1'",
+	),
+);
+
 return array(
 	'routes' => array(
 		'acl' => array(
@@ -8,39 +18,9 @@ return array(
 				'defaults' => array(
 					'controller' => 'Acl\Controller\Index',
 					'action'     => 'index',
-					'accessDqlWhereClause' => array(
-							"a.name = 'admin' AND a.value = '1'",
-							"a.name = 'sitecode' AND a.value LIKE '74%'",
-					),
-// 					'attributePatternSetConfig' => array(
-// 						/*
-// 						 * each element is evaluated with an OR operator
-// 						 * a nested array is evaluated as single value like
-// 						 * an AND would behanve
-// 						*/
-// 						array(
-// 							'name' => 'admin',
-// 							'value' => '1',
-// 						),
-// 						array(
-// 							array(
-// 								array(
-// 									'name' => 'jobtitle',
-// 									'value' => 'managaer',
-// 								),
-// 								array(
-// 									'name' => 'jobtitle',
-// 									'value' => 'supervisor',
-// 								),
-// 							),
-// 							array(
-// 								'name' => 'location',
-// 								'value' => 'IT',
-// 							),
-// 						),
-// 					),
+					'accessDqlWhereClause' => $aclAccessDql,
 				),
-				),
+			),
 			'may_terminate' => true,
 			'child_routes' => array(
 				'logout' => array(
