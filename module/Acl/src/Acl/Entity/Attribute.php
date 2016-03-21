@@ -2,7 +2,6 @@
 namespace Acl\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Zend\Crypt\Symmetric\Padding\PaddingInterface;
 use Acl\Model\StandardInputFilters;
 
 /**
