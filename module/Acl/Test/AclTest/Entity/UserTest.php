@@ -3,10 +3,10 @@ namespace AclTest\Entiy;
 
 use Acl\Entity\User;
 use Acl\Entity\Attribute;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit_Framework_TestCase;
 use \DateTime;
 
-class UserTest extends \PHPUnit_Framework_TestCase
+class UserTest extends PHPUnit_Framework_TestCase
 {
 	public function testUserInitialState()
 	{
@@ -14,7 +14,7 @@ class UserTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertNull($user->getId(), 'User::id should be null');
 		$this->assertTrue($user->getAdded() instanceof DateTime, 'User::added should have a DateTime value.');
-		$this->assertTrue($user->getAdded() == new DateTime(), 'User::added should be set to today when instantiated');
+		$this->assertEquals($user->getAdded(), new DateTime(), 'User::added should be set to today when instantiated');
 		$this->assertNull($user->getRemoved(), 'User::removed should be null');
 
 		$this->assertNull($user->getIdentity(), 'User::identity should be null');

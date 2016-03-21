@@ -2,6 +2,8 @@
 namespace Acl\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Zend\Crypt\Symmetric\Padding\PaddingInterface;
+use Acl\Model\StandardInputFilters;
 
 /**
  * @ORM\Entity
@@ -11,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Attribute extends AbstractEntity
 {
+	use StandardInputFilters;
+
 	/**
 	 * @ORM\Column(type="string", length=30)
 	 *
@@ -49,7 +53,7 @@ class Attribute extends AbstractEntity
 	 */
 	public function setName($value)
 	{
-		$this->name = (string)$value;
+		$this->name = $this->filterStringInput($value);
 		return $this;
 	}
 
@@ -69,7 +73,7 @@ class Attribute extends AbstractEntity
 	 */
 	public function setValue($value)
 	{
-		$this->value = (string)$value;
+		$this->value = $this->filterStringInput($value);
 		return $this;
 	}
 
@@ -92,6 +96,5 @@ class Attribute extends AbstractEntity
 		$this->user = $user;
 		return $this;
 	}
-
 
 }

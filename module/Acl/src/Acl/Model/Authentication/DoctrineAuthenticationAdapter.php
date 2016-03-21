@@ -74,11 +74,15 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 	}
 
 	/**
-	 * @return Result
+	 * @return Result|null
 	 */
 	public function getResultPrototype()
 	{
-		return clone $this->resultPrototype;
+		if ($this->resultPrototype) {
+			return clone $this->resultPrototype;
+		} else {
+			return null;
+		}
 	}
 
 	/**

@@ -3,10 +3,10 @@ namespace AclTest\Entiy;
 
 use Acl\Entity\Session;
 use Acl\Entity\User;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit_Framework_TestCase;
 use \DateTime;
 
-class SessionTest extends \PHPUnit_Framework_TestCase
+class SessionTest extends PHPUnit_Framework_TestCase
 {
 	public function testSessionInitialState()
 	{
@@ -25,9 +25,11 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 	public function testSessionPropertyAccessors()
 	{
 		$session = new Session();
+		$user = new User();
+		$user->setIdentity('DevTestUser');
 
 		$data = array(
-				'user' => new User(),
+				'user' => $user,
 				'ipAddress' => '192.168.1.255',
 				'expires' => new DateTime(),
 		);
@@ -37,7 +39,7 @@ class SessionTest extends \PHPUnit_Framework_TestCase
 			->setIpAddress($data['ipAddress'])
 			->setExpires($data['expires']);
 
-			$this->assertSame($data['user'], $session->getUser(), 'Session::user property accessors broken. Value set: %s - Value retrieved: %s' );
+			$this->assertSame($data['user'], $session->getUser(), sprintf("Session::user property accessors broken. User set: %s - User retrieved: %s", $data['user']->getIdentity(), $session->getUser()->getIdentity() ) );
 			$this->assertSame($data['ipAddress'], $session->getIpAddress(), sprintf("Session::name property accessors broken. Value set: %s - Value retrieved: %s", $data['ipAddress'], $session->getIpAddress() ) );
 			$this->assertSame($data['expires'], $session->getExpires(), sprintf("Session::value property accessors broken. Value set: %s - Value retrieved: %s", $data['expires']->format('Y-m-d'), $session->getExpires()->format('Y-m-d') ) );
 
