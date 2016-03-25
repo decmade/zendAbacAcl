@@ -2,9 +2,10 @@
 namespace AclTest\Entiy;
 
 use Acl\Entity\User;
-use Acl\Entity\Attribute;
 use \PHPUnit_Framework_TestCase;
 use \DateTime;
+use Acl\Entity\Attribute;
+use Acl\Entity\Session;
 
 class UserTest extends PHPUnit_Framework_TestCase
 {
@@ -26,30 +27,218 @@ class UserTest extends PHPUnit_Framework_TestCase
 
 	}
 
-	public function testUserPropertyAccessors()
+	/**
+	 *
+	 * @param mixed $input
+	 * @param string $expected
+	 *
+	 * @dataProvider providerTestStringPropertyAccessors
+	 */
+	public function testStringPropertyAccessors($input, $expected)
+	{
+		$stringPropertyAccessorNames = array(
+				'Identity',
+		);
+
+		$user = new User();
+
+		foreach($stringPropertyAccessorNames as $propertyName) {
+			$setMethodName = sprintf("set%s", $propertyName);
+			$getMethodName = sprintf("get%s", $propertyName);
+
+			$returnedUser = $user->$setMethodName($input);
+
+			/*
+			 * assert that there is method chaining active
+			 */
+			$errorMessage = sprintf("call to User::%s() does not return the same instance of User; no 'return \$this;'", $setMethodName);
+			$this->assertSame($user, $returnedUser, $errorMessage);
+
+			/*
+			 * assert thtat the value set is consistent with the expected value returned
+			 */
+			$output = $user->$getMethodName();
+			$errorMessage = sprintf("call to User::%s('%s') and then User::%s() returned value '%s'",$setMethodName, print_r($input, true), $getMethodName, $output);
+			$this->assertEquals($expected, $output, $errorMessage);
+		}
+	}
+
+	/**
+	 * data sets for $this::testNamePropertyAccessors()
+	 *
+	 * @return array
+	 */
+	public function providerTestStringPropertyAccessors()
+	{
+		return array(
+				array('development', 'development'),
+				array(5478902578402, '5478902578402'),
+				array(0.254, '0.254'),
+				array(true, '1'),
+				array(new \stdClass(), '<invalid>'),
+				array(array(1,2,3), '<invalid>'),
+				array(null, ''),
+		);
+	}
+
+	/**
+	 *
+	 * @param mixed $input
+	 * @param string $expected
+	 *
+	 * @dataProvider providerTestIntegerPropertyAccessors
+	 */
+	public function testIntegerPropertyAccessors($input, $expected)
+	{
+		$stringPropertyAccessorNames = array(
+				'Status',
+		);
+
+		$user = new User();
+
+		foreach($stringPropertyAccessorNames as $propertyName) {
+			$setMethodName = sprintf("set%s", $propertyName);
+			$getMethodName = sprintf("get%s", $propertyName);
+
+			$returnedUser = $user->$setMethodName($input);
+
+			/*
+			 * assert that there is method chaining active
+			 */
+			$errorMessage = sprintf("call to User::%s() does not return the same instance of User; no 'return \$this;'", $setMethodName);
+			$this->assertSame($user, $returnedUser, $errorMessage);
+
+			/*
+			 * assert thtat the value set is consistent with the expected value returned
+			 */
+			$output = $user->$getMethodName();
+			$errorMessage = sprintf("call to User::%s('%s') and then User::%s() returned value '%s'",$setMethodName, print_r($input, true), $getMethodName, $output);
+			$this->assertEquals($expected, $output, $errorMessage);
+		}
+	}
+
+	/**
+	 * data sets for $this::testNamePropertyAccessors()
+	 *
+	 * @return array
+	 */
+	public function providerTestIntegerPropertyAccessors()
+	{
+		return array(
+				array('development', 0),
+				array(5478902578402, '5478902578402'),
+				array(0.254, 0),
+				array(true, '1'),
+				array(new \stdClass(), 0),
+				array(array(1,2,3), 0),
+				array(null, 0),
+		);
+	}
+
+	/**
+	 *
+	 * @param mixed $input
+	 * @param bool $expected
+	 *
+	 * @dataProvider providerTestHashedPropertyAccessors
+	 */
+	public function testHashedPropertyAccessors($input, $expected)
+	{
+		$stringPropertyAccessorNames = array(
+				'Credential',
+		);
+
+		$user = new User();
+
+		foreach($stringPropertyAccessorNames as $propertyName) {
+			$setMethodName = sprintf("set%s", $propertyName);
+			$checkMethodName = sprintf("check%s", $propertyName);
+
+			$returnedUser = $user->$setMethodName($input);
+
+			/*
+			 * assert that there is method chaining active
+			 */
+			$errorMessage = sprintf("call to User::%s() does not return the same instance of User; no 'return \$this;'", $setMethodName);
+			$this->assertSame($user, $returnedUser, $errorMessage);
+
+			/*
+			 * assert thtat the value set is consistent with the expected value returned
+			 */
+			$errorMessage = sprintf("call to User::%s('%s') and then User::%s() with the same input returned '%s'",$setMethodName, print_r($input, true), $checkMethodName, !$expected);
+			if ($expected == true ) {
+				$this->assertTrue($user->$checkMethodName($input), $errorMessage);
+			} else {
+				$this->assertFalse($user->$checkMethodName($input), $errorMessage);
+			}
+		}
+	}
+
+	/**
+	 * data sets for $this::testNamePropertyAccessors()
+	 *
+	 * @return array
+	 */
+	public function providerTestHashedPropertyAccessors()
+	{
+		return array(
+				array('development', true),
+				array(5478902578402, true),
+				array(0.254, true),
+				array(true, true),
+				array(new \stdClass(), false),
+				array(array(1,2,3), false),
+				array(null, true),
+		);
+	}
+
+	/**
+	 *
+	 * @param mixed $input
+	 *
+	 * @dataProvider providerTestCollectionPropertyAccessors
+	 */
+	public function testCollectionPropertyAccessors($propertyName, $input)
 	{
 		$user = new User();
 
-		$data = array(
-				'identity' => 'devuser',
-				'credential' => 'passphrase',
-				'status' => $user::STATUS_INACTIVE,
-		);
+		$addMethodName = sprintf("add%s", $propertyName);
+		$getMethodName = sprintf("get%ss", $propertyName);
 
-		$user
-			->setIdentity($data['identity'])
-			->setCredential($data['credential'])
-			->setStatus($data['status'])
-			->addAttribute(new Attribute());
+		$returnedUser = $user->$addMethodName($input);
 
-			$this->assertSame($data['identity'], $user->getIdentity(), sprintf("User::identity property accessors broken. Value set: %s - Value retrieved: %s", $data['identity'], $user->getIdentity() ) );
-			$this->assertTrue($user->checkCredential($data['credential']), 'User::credential property accessors broken. Hash patterns do not match');
-			$this->assertSame($data['status'], $user->getStatus(), sprintf("User::status property accessors broken. Value set: %s - Value retrieved: %s", $data['status'], $user->getStatus() ) );
-			$this->assertTrue(count($user->getAttributes()) == 1, sprintf("User::attributes property accessors broken. One attribute added, %s attributes retrieved",count($user->getAttributes()) ) );
+		/*
+		 * assert that there is method chaining active
+		 */
+		$errorMessage = sprintf("call to User::%s() does not return the same instance of User; no 'return \$this;'", $addMethodName);
+		$this->assertSame($user, $returnedUser, $errorMessage);
 
-
+		/*
+		 * assert thtat the value set is consistent with the expected value returned
+		 */
+		$errorMessage = sprintf("call to last element of User::%s() does not match the entity added.", $getMethodName);
+		$elements = $user->$getMethodName();
+		$lastElement = end($elements);
+		$this->assertSame($input, $lastElement, $errorMessage);
 	}
 
+	/**
+	 * data sets for $this::testCollectionPropertyAccessors()
+	 *
+	 * @return array
+	 */
+	public function providerTestCollectionPropertyAccessors()
+	{
+		$attribute = new Attribute();
+		$session = new Session();
+
+		return array(
+			array('Attribute', $attribute),
+			array('Attribute', $attribute->setName('TestProperty')),
+			array('Attribute', $attribute->setValue('TestPropteryValue')),
+			array('Session', $session),
+		);
+	}
 
 
 }

@@ -77,7 +77,7 @@ class User extends AbstractEntity
 	 */
 	public function setIdentity($value)
 	{
-		$this->identity = (string)$value;
+		$this->identity = $this->filterStringInput($value);
 		return $this;
 	}
 
@@ -89,6 +89,10 @@ class User extends AbstractEntity
 	 */
 	public function checkCredential($value)
 	{
+		/*
+		 * make certain that the credential is a string
+		 */
+		$value = $this->filterStringInput($value);
 		return password_verify($value, $this->credential);
 	}
 
@@ -100,9 +104,15 @@ class User extends AbstractEntity
 	 */
 	public function setCredential($value)
 	{
-		$rawCredential = (string)$value;
-		$hash = password_hash($rawCredential,PASSWORD_BCRYPT);
-		$this->credential = $hash;
+		$rawCredential = $this->filterStringInput($value);
+		/*
+		 * only if there is a valid string passed
+		 * will we actually set the password of the user
+		 */
+		if ($rawCredential != '<invalid>') {
+			$hash = password_hash($rawCredential,PASSWORD_BCRYPT);
+			$this->credential = $hash;
+		}
 		return $this;
 	}
 
@@ -122,7 +132,7 @@ class User extends AbstractEntity
 	 */
 	public function setStatus($value)
 	{
-		$this->status = (int)$value;
+		$this->status = $this->filterIntegerInput($value);
 		return $this;
 	}
 
@@ -147,18 +157,19 @@ class User extends AbstractEntity
 		return $this->attributes->toArray();
 	}
 
-// 	/**
-// 	 *
-// 	 * @param Session $session
-// 	 *
-// 	 * @return $this
-// 	 */
-// 	public function addSession(Session $session)
-// 	{
-// 		$this->sessions[] = $session;
-// 		$session->setUser($this);
-// 		return $this;
-// 	}
+
+	/**
+	 *NEVER USED BY DoctrineSessionStorage
+	 * @param Session $session
+	 *
+	 * @return $this
+	 */
+	public function addSession(Session $session)
+	{
+		$this->sessions[] = $session;
+		$session->setUser($this);
+		return $this;
+	}
 
 	/**
 	 *

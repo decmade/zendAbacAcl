@@ -50,7 +50,7 @@ class Session extends AbstractEntity
 	 */
 	public function setIpAddress($value)
 	{
-		$this->ipAddress = (string)$value;
+		$this->ipAddress = $this->filterStringInput($value);
 		return $this;
 	}
 

@@ -3,6 +3,7 @@ namespace Acl\Entity;
 
 use \Doctrine\ORM\Mapping as ORM;
 use \DateTime;
+use Acl\Model\StandardInputFiltersTrait;
 
 /**
  * @ORM\MappedSuperclass
@@ -11,6 +12,8 @@ use \DateTime;
  */
 abstract class AbstractEntity
 {
+	use StandardInputFiltersTrait;
+
 	/**
 	 * @ORM\Id
 	 * @ORM\GeneratedValue(strategy="AUTO")

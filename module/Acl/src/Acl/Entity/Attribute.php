@@ -2,7 +2,6 @@
 namespace Acl\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Acl\Model\StandardInputFilters;
 
 /**
  * @ORM\Entity
@@ -12,8 +11,6 @@ use Acl\Model\StandardInputFilters;
  */
 class Attribute extends AbstractEntity
 {
-	use StandardInputFilters;
-
 	/**
 	 * @ORM\Column(type="string", length=30)
 	 *

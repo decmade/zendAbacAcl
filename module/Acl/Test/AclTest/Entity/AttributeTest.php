@@ -29,7 +29,6 @@ class AttributeTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @param mixed $input
 	 * @param string $expected
-	 * @param string $errorMessage
 	 *
 	 * @dataProvider providerTestStringPropertyAccessors
 	 */
