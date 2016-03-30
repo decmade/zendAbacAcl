@@ -81,8 +81,7 @@ class SessionTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testUserPropertyAccessors()
 	{
-		$user = $this->getMockBuilder('Acl\Entity\User')
-			->getMock();
+		$user = $this->getMockBuilder('Acl\Entity\User')->getMock();
 
 		$session = new Session();
 		$returnedSession = $session->setUser($user);

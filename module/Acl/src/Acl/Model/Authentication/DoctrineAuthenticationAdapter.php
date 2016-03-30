@@ -4,10 +4,12 @@ namespace Acl\Model\Authentication;
 use Zend\Authentication\Adapter\AdapterInterface;
 use Doctrine\ORM\EntityManager;
 use Acl\Model\DependentObjectTrait;
+use Acl\Model\StandardInputFiltersTrait;
 
 class DoctrineAuthenticationAdapter implements AdapterInterface
 {
 	use DependentObjectTrait;
+	use StandardInputFiltersTrait;
 
 	/**
 	 *
@@ -49,7 +51,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 	 */
 	public function setIdentity($value)
 	{
-		$this->identity = (string)$value;
+		$this->identity = $this->filterStringInput($value);
 		return $this;
 	}
 
@@ -69,7 +71,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 	 */
 	public function setCredential($value)
 	{
-		$this->credential = (string)$value;
+		$this->credential = $this->filterStringInput($value);
 		return $this;
 	}
 
