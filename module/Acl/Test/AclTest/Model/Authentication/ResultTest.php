@@ -3,9 +3,12 @@ namespace AclTest\Entiy;
 
 use Acl\Model\Authentication\Result;
 use \PHPUnit_Framework_TestCase;
+use AclTest\StandardProvidersTrait;
 
 class ResultTest extends PHPUnit_Framework_TestCase
 {
+	use StandardProvidersTrait;
+
 	public function testResultInitialState()
 	{
 		$result = new Result();
@@ -16,28 +19,41 @@ class ResultTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(count($result->getMessages()) == 0, 'Result::messages array should be empty');
 	}
 
-	public function testResultPropertyAccessors()
-	{
-		$result = new Result();
 
-		$data = array(
-				'code' => $result::FAILURE,
-				'identity' => 8,
-				'message' => 'THIS IS A TEST MESSAGE',
+	/**
+	 *
+	 * @param mixed $input
+	 * @param string $expected
+	 *
+	 * @dataProvider providerTestIntegerPropertyAccessors
+	 */
+	public function testIntegerPropertyAccessors($input, $expected)
+	{
+		$propertyAccessorNames = array(
+				'Code',
+				'Identity',
 		);
 
-		$result
-			->setCode($data['code'])
-			->setIdentity($data['identity'])
-			->addMessage($data['message']);
+		$result = new Result();
 
-			$this->assertSame($data['code'], $result->getCode(), sprintf("Result::code property accessors broken. Value set: %s - Value retrieved: %s", $data['code'], $result->getCode() ) );
-			$this->assertSame($data['identity'], $result->getIdentity(), sprintf("Result::identity property accessors broken. Value set: %s - Value retrieved: %s", $data['identity'], $result->getIdentity() ) );
-			$this->assertTrue(count($result->getMessages()) == 1, sprintf("Result::message property accessors broken. Added 1 message and %s messages retrieved.", count($result->getMessages()) ) );
-			$this->assertSame($data['message'], $result->getMessages()[0], sprintf("Result::message property accessors broken. Value added: %s - Value retrieved: %s", $data['message'], $result->getMessages()[0] ) );
+		foreach($propertyAccessorNames as $propertyName) {
+			$setMethodName = sprintf("set%s", $propertyName);
+			$getMethodName = sprintf("get%s", $propertyName);
 
+			$returnedResult = $result->$setMethodName($input);
+
+			/*
+			 * assert that there is method chaining active
+			 */
+			$errorMessage = sprintf("call to Result::%s() does not return the same instance of Result; no 'return \$this;'", $setMethodName);
+			$this->assertSame($result, $returnedResult, $errorMessage);
+
+			/*
+			 * assert thtat the value set is consistent with the expected value returned
+			 */
+			$output = $result->$getMethodName();
+			$errorMessage = sprintf("call to Result::%s('%s') and then Result::%s() returned value '%s'",$setMethodName, print_r($input, true), $getMethodName, $output);
+			$this->assertEquals($expected, $output, $errorMessage);
+		}
 	}
-
-
-
 }

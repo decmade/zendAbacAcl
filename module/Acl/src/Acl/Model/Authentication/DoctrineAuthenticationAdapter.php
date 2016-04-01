@@ -204,7 +204,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 			},
 
 			/*
-			 * test for empty user credntial
+			 * test for empty user credential
 			 */
 			function ($adapter) {
 				$credential = $adapter->getCredential();

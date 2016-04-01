@@ -48,11 +48,11 @@ class IndexController extends AbstractActionController
     	$router = $sm->get('Router');
     	$request = $this->getRequest();
     	$validator = $sm->get('Acl\UserAttributeValidator');
-    	$accessDqlWhereClause = $router->match($request)->getParam('accessDqlWhereClause');
+    	$accessDqlConfig = $router->match($request)->getParam('accessDqlConfig');
 
-    	$validator->validate($result['identity'], $accessDqlWhereClause);
+    	$validator->validate($result['identity'], $accessDqlConfig);
 
-    	$isValid = $validator->validate($result['identity'], $accessDqlWhereClause);
+    	$isValid = $validator->validate($result['identity'], $accessDqlConfig);
     	$cachedAttributes = $validator->getCachedAttributes();
     	$attributesFound = array();
 
@@ -67,7 +67,7 @@ class IndexController extends AbstractActionController
         return array(
         	'test' => array(
         		'authenticationTest' => $result,
-        		'accessDqlWhereClause' => $accessDqlWhereClause ,
+        		'accessDqlConfig' => $accessDqlConfig ,
         		'hasAccess' => ($isValid) ? 'YES' : 'NO',
         		'attributesFound' => $attributesFound,
         	),

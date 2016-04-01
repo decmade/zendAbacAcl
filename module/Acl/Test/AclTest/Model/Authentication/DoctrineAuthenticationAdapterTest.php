@@ -4,9 +4,12 @@ namespace AclTest\Model;
 use Acl\Model\Authentication\DoctrineAuthenticationAdapter;
 use Acl\Model\Authentication\Result;
 use \PHPUnit_Framework_TestCase;
+use AclTest\StandardProvidersTrait;
 
 class DoctrineAuthenticationAdapterTest extends PHPUnit_Framework_TestCase
 {
+	use StandardProvidersTrait;
+
 	protected $traceError = true;
 
 	public function testDoctrineAuthenticationAdapterInitialState()
@@ -28,14 +31,14 @@ class DoctrineAuthenticationAdapterTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testStringPropertyAccessors($input, $expected)
 	{
-		$stringPropertyAccessorNames = array(
+		$propertyAccessorNames = array(
 				'Identity',
 				'Credential',
 		);
 
 		$adapter = new DoctrineAuthenticationAdapter();
 
-		foreach($stringPropertyAccessorNames as $propertyName) {
+		foreach($propertyAccessorNames as $propertyName) {
 			$setMethodName = sprintf("set%s", $propertyName);
 			$getMethodName = sprintf("get%s", $propertyName);
 
@@ -54,24 +57,6 @@ class DoctrineAuthenticationAdapterTest extends PHPUnit_Framework_TestCase
 			$errorMessage = sprintf("call to Adapter::%s('%s') and then Adapter::%s() returned value '%s'",$setMethodName, print_r($input, true), $getMethodName, $output);
 			$this->assertEquals($expected, $output, $errorMessage);
 		}
-	}
-
-	/**
-	 * data sets for $this::testNamePropertyAccessors()
-	 *
-	 * @return array
-	 */
-	public function providerTestStringPropertyAccessors()
-	{
-		return array(
-				array('development', 'development'),
-				array(5478902578402, '5478902578402'),
-				array(0.254, '0.254'),
-				array(true, '1'),
-				array(new \stdClass(), '<invalid>'),
-				array(array(1,2,3), '<invalid>'),
-				array(null, ''),
-		);
 	}
 
 	/**
@@ -110,5 +95,6 @@ class DoctrineAuthenticationAdapterTest extends PHPUnit_Framework_TestCase
 
 		$this->assertSame($adapter->getEntityManager(), $em, $errorMessage );
 	}
+
 
 }

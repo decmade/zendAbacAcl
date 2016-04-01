@@ -2,6 +2,7 @@
 namespace Acl\Model\Authentication;
 
 use Zend\Authentication\Result as ZendResult;
+use Acl\Model\StandardInputFiltersTrait;
 
 
 /**
@@ -18,6 +19,8 @@ use Zend\Authentication\Result as ZendResult;
  */
 class Result extends ZendResult
 {
+	use StandardInputFiltersTrait;
+
 	/**
 	 * initialize without parameters
 	 */
@@ -34,17 +37,19 @@ class Result extends ZendResult
 	 */
 	public function setCode($value)
 	{
-		$this->code = (int)$value;
+		$this->code = $this->filterIntegerInput($value);
 		return $this;
 	}
 
 	/**
+	 * set the surrogate key that uniquely identifies
+	 * the user in the database
 	 *
-	 * @param unknown $value
+	 * @param int $value
 	 */
 	public function setIdentity($value)
 	{
-		$this->identity = $value;
+		$this->identity = $this->filterIntegerInput($value);
 		return $this;
 	}
 
@@ -56,7 +61,7 @@ class Result extends ZendResult
 	 */
 	public function addMessage($value)
 	{
-		$this->messages[] = (string)$value;
+		$this->messages[] = $this->filterStringInput($value);
 		return $this;
 	}
 }

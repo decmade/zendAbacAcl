@@ -18,7 +18,7 @@ return array(
 				'defaults' => array(
 					'controller' => 'Acl\Controller\Index',
 					'action'     => 'index',
-					'accessDqlWhereClause' => $aclAccessDql,
+					'accessDqlConfig' => $aclAccessDql,
 				),
 			),
 			'may_terminate' => true,

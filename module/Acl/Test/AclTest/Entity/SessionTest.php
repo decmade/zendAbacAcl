@@ -5,9 +5,12 @@ use Acl\Entity\Session;
 use Acl\Entity\User;
 use \PHPUnit_Framework_TestCase;
 use \DateTime;
+use AclTest\StandardProvidersTrait;
 
 class SessionTest extends PHPUnit_Framework_TestCase
 {
+	use StandardProvidersTrait;
+
 	public function testSessionInitialState()
 	{
 		$session = new Session();
@@ -31,13 +34,13 @@ class SessionTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testStringPropertyAccessors($input, $expected)
 	{
-		$stringPropertyAccessorNames = array(
+		$propertyAccessorNames = array(
 				'IpAddress',
 		);
 
 		$session = new Session();
 
-		foreach($stringPropertyAccessorNames as $propertyName) {
+		foreach($propertyAccessorNames as $propertyName) {
 			$setMethodName = sprintf("set%s", $propertyName);
 			$getMethodName = sprintf("get%s", $propertyName);
 
@@ -56,24 +59,6 @@ class SessionTest extends PHPUnit_Framework_TestCase
 			$errorMessage = sprintf("call to Session::%s('%s') and then Session::%s() returned value '%s'",$setMethodName, print_r($input, true), $getMethodName, $output);
 			$this->assertEquals($expected, $output, $errorMessage);
 		}
-	}
-
-	/**
-	 * data sets for $this::testNamePropertyAccessors()
-	 *
-	 * @return array
-	 */
-	public function providerTestStringPropertyAccessors()
-	{
-		return array(
-				array('development', 'development'),
-				array(5478902578402, '5478902578402'),
-				array(0.254, '0.254'),
-				array(true, '1'),
-				array(new \stdClass(), '<invalid>'),
-				array(array(1,2,3), '<invalid>'),
-				array(null, ''),
-		);
 	}
 
 	/**
@@ -138,15 +123,4 @@ class SessionTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals($expectedValue, $actualValue, $errorMessage);
 	}
 
-	/**
-	 * @return array
-	 */
-	public function providerTestThatUserPropertyIsPassedByReference()
-	{
-		return array(
-				array('getStatus', User::STATUS_ACTIVE),
-				array('getIdentity', 'twasBrillig34'),
-				array('getSessions', array(1,2,3,4,5)),
-		);
-	}
 }

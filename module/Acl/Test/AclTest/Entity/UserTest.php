@@ -6,9 +6,12 @@ use \PHPUnit_Framework_TestCase;
 use \DateTime;
 use Acl\Entity\Attribute;
 use Acl\Entity\Session;
+use AclTest\StandardProvidersTrait;
 
 class UserTest extends PHPUnit_Framework_TestCase
 {
+	use StandardProvidersTrait;
+
 	public function testUserInitialState()
 	{
 		$user = new User();
@@ -36,13 +39,13 @@ class UserTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testStringPropertyAccessors($input, $expected)
 	{
-		$stringPropertyAccessorNames = array(
+		$propertyAccessorNames = array(
 				'Identity',
 		);
 
 		$user = new User();
 
-		foreach($stringPropertyAccessorNames as $propertyName) {
+		foreach($propertyAccessorNames as $propertyName) {
 			$setMethodName = sprintf("set%s", $propertyName);
 			$getMethodName = sprintf("get%s", $propertyName);
 
@@ -61,24 +64,6 @@ class UserTest extends PHPUnit_Framework_TestCase
 			$errorMessage = sprintf("call to User::%s('%s') and then User::%s() returned value '%s'",$setMethodName, print_r($input, true), $getMethodName, $output);
 			$this->assertEquals($expected, $output, $errorMessage);
 		}
-	}
-
-	/**
-	 * data sets for $this::testNamePropertyAccessors()
-	 *
-	 * @return array
-	 */
-	public function providerTestStringPropertyAccessors()
-	{
-		return array(
-				array('development', 'development'),
-				array(5478902578402, '5478902578402'),
-				array(0.254, '0.254'),
-				array(true, '1'),
-				array(new \stdClass(), '<invalid>'),
-				array(array(1,2,3), '<invalid>'),
-				array(null, ''),
-		);
 	}
 
 	/**
@@ -90,13 +75,13 @@ class UserTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testIntegerPropertyAccessors($input, $expected)
 	{
-		$stringPropertyAccessorNames = array(
+		$propertyAccessorNames = array(
 				'Status',
 		);
 
 		$user = new User();
 
-		foreach($stringPropertyAccessorNames as $propertyName) {
+		foreach($propertyAccessorNames as $propertyName) {
 			$setMethodName = sprintf("set%s", $propertyName);
 			$getMethodName = sprintf("get%s", $propertyName);
 
@@ -118,24 +103,6 @@ class UserTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * data sets for $this::testNamePropertyAccessors()
-	 *
-	 * @return array
-	 */
-	public function providerTestIntegerPropertyAccessors()
-	{
-		return array(
-				array('development', 0),
-				array(5478902578402, '5478902578402'),
-				array(0.254, 0),
-				array(true, '1'),
-				array(new \stdClass(), 0),
-				array(array(1,2,3), 0),
-				array(null, 0),
-		);
-	}
-
-	/**
 	 *
 	 * @param mixed $input
 	 * @param bool $expected
@@ -144,13 +111,13 @@ class UserTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testHashedPropertyAccessors($input, $expected)
 	{
-		$stringPropertyAccessorNames = array(
+		$propertyAccessorNames = array(
 				'Credential',
 		);
 
 		$user = new User();
 
-		foreach($stringPropertyAccessorNames as $propertyName) {
+		foreach($propertyAccessorNames as $propertyName) {
 			$setMethodName = sprintf("set%s", $propertyName);
 			$checkMethodName = sprintf("check%s", $propertyName);
 
@@ -172,24 +139,6 @@ class UserTest extends PHPUnit_Framework_TestCase
 				$this->assertFalse($user->$checkMethodName($input), $errorMessage);
 			}
 		}
-	}
-
-	/**
-	 * data sets for $this::testNamePropertyAccessors()
-	 *
-	 * @return array
-	 */
-	public function providerTestHashedPropertyAccessors()
-	{
-		return array(
-				array('development', true),
-				array(5478902578402, true),
-				array(0.254, true),
-				array(true, true),
-				array(new \stdClass(), false),
-				array(array(1,2,3), false),
-				array(null, true),
-		);
 	}
 
 	/**

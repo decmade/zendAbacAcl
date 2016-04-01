@@ -77,11 +77,11 @@ class UserAttributeValidator
 	 * for any additional logic
 	 *
 	 * @param string $userId
-	 * @param string|array $attributesWhereClause
+	 * @param string|array $accessDqlConfig
 	 *
 	 * @return boolean
 	 */
-	public function validate($userId, $attributesWhereClause)
+	public function validate($userId, $accessDqlConfig)
 	{
 
 		/*
@@ -89,7 +89,7 @@ class UserAttributeValidator
 		 */
 		$this->initializeCachedAttributes();
 
-		return $this->testClauseGroup($userId, $attributesWhereClause);
+		return $this->testClauseGroup($userId, $accessDqlConfig);
 	}
 
 	/**

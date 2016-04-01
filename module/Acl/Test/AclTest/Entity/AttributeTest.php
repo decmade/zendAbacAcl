@@ -5,9 +5,11 @@ use Acl\Entity\Attribute;
 use Acl\Entity\User;
 use \PHPUnit_Framework_TestCase;
 use \DateTime;
+use AclTest\StandardProvidersTrait;
 
 class AttributeTest extends PHPUnit_Framework_TestCase
 {
+	use StandardProvidersTrait;
 	/**
 	 *
 	 */
@@ -34,14 +36,14 @@ class AttributeTest extends PHPUnit_Framework_TestCase
 	 */
 	public function testStringPropertyAccessors($input, $expected)
 	{
-		$stringPropertyAccessorNames = array(
+		$propertyAccessorNames = array(
 			'Name',
 			'Value',
 		);
 
 		$attribute = new Attribute();
 
-		foreach($stringPropertyAccessorNames as $propertyName) {
+		foreach($propertyAccessorNames as $propertyName) {
 			$setMethodName = sprintf("set%s", $propertyName);
 			$getMethodName = sprintf("get%s", $propertyName);
 
@@ -60,24 +62,6 @@ class AttributeTest extends PHPUnit_Framework_TestCase
 			$errorMessage = sprintf("call to Attribute::%s('%s') and then Attribute::%s() returned value '%s'",$setMethodName, print_r($input, true), $getMethodName, $output);
 			$this->assertEquals($expected, $output, $errorMessage);
 		}
-	}
-
-	/**
-	 * data sets for $this::testNamePropertyAccessors()
-	 *
-	 * @return array
-	 */
-	public function providerTestStringPropertyAccessors()
-	{
-		return array(
-			array('development', 'development'),
-			array(5478902578402, '5478902578402'),
-			array(0.254, '0.254'),
-			array(true, '1'),
-			array(new \stdClass(), '<invalid>'),
-			array(array(1,2,3), '<invalid>'),
-			array(null, ''),
-		);
 	}
 
 	/**
@@ -141,18 +125,6 @@ class AttributeTest extends PHPUnit_Framework_TestCase
 		$actualValue = $attribute->getUser()->$methodName();
 		$errorMessage = sprintf("call to User::%s on user injected into Attribute is not consistent with the test value ofg injected", $methodName);
 		$this->assertEquals($expectedValue, $actualValue, $errorMessage);
-	}
-
-	/**
-	 * @return array
-	 */
-	public function providerTestThatUserPropertyIsPassedByReference()
-	{
-		return array(
-				array('getStatus', User::STATUS_ACTIVE),
-				array('getIdentity', 'twasBrillig34'),
-				array('getSessions', array(1,2,3,4,5)),
-		);
 	}
 
 }
