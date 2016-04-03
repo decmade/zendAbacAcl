@@ -1,7 +1,7 @@
 <?php
 namespace Acl\Model;
 
-abstract class AbstractFactory
+abstract class zzzAbstractFactory
 {
 	use DependentObjectTrait;
 

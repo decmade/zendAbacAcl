@@ -264,6 +264,17 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
+    public function addSession(\Acl\Entity\Session $session)
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'addSession', array($session));
+
+        return parent::addSession($session);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getSessions()
     {
 

@@ -51,6 +51,9 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 	 */
 	public function setIdentity($value)
 	{
+		/*
+		 * apply the standard string input filter to $value
+		 */
 		$this->identity = $this->filterStringInput($value);
 		return $this;
 	}

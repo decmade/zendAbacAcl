@@ -37,7 +37,10 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
+    	return array();
+    }
 
+    public function loginAction() {
     	$sm = $this->getServiceLocator();
 
     	$em = $sm->get('Acl\Entity\Manager');
@@ -45,32 +48,7 @@ class IndexController extends AbstractActionController
 
     	$result = $this->authenticationTest();
 
-    	$router = $sm->get('Router');
-    	$request = $this->getRequest();
-    	$validator = $sm->get('Acl\UserAttributeValidator');
-    	$accessDqlConfig = $router->match($request)->getParam('accessDqlConfig');
-
-    	$validator->validate($result['identity'], $accessDqlConfig);
-
-    	$isValid = $validator->validate($result['identity'], $accessDqlConfig);
-    	$cachedAttributes = $validator->getCachedAttributes();
-    	$attributesFound = array();
-
-    	foreach($cachedAttributes as $attribute)
-    	{
-    		$attributesFound[] = array(
-    			'name' => $attribute->getName(),
-    			'value' => $attribute->getValue(),
-    		);
-    	}
-
         return array(
-        	'test' => array(
-        		'authenticationTest' => $result,
-        		'accessDqlConfig' => $accessDqlConfig ,
-        		'hasAccess' => ($isValid) ? 'YES' : 'NO',
-        		'attributesFound' => $attributesFound,
-        	),
         );
     }
 
@@ -86,10 +64,16 @@ class IndexController extends AbstractActionController
 
     	$authService = $this->authenticationService;
 
-    	$authService->clearIdentity();
+    	if ($authService->hasIdentity()) {
+	    	$userId = $authService->getIdentity();
+
+	    	$authService->clearIdentity();
+    	} else {
+    		$userId = 0;
+    	}
 
     	return array(
-
+			'userId' => $userId,
     	);
     }
 

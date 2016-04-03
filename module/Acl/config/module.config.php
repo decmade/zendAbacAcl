@@ -11,6 +11,7 @@ $routesConfig = include('routes.config.php');
 $servicesConfig = include('services.config.php');
 $controllersConfig = include('controllers.config.php');
 $doctrineConfig = include('doctrine.config.php');
+$listenersConfig = include('listeners.config.php');
 
 return array(
     'router' => $routesConfig,
@@ -29,4 +30,5 @@ return array(
         ),
     ),
 	'doctrine' => $doctrineConfig,
+	'listeners' => $listenersConfig,
 );

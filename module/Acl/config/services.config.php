@@ -75,14 +75,25 @@ return array(
 
 // 			return $parser;
 // 		},
-		'Acl\UserAttributeValidator' => function($sm) {
+		'Acl\Authorization\UserAttributeEvaluator' => function($sm) {
 			$em = $sm->get('Acl\EntityManager');
 
-			$validator = new \Acl\Model\Authorization\UserAttributeValidator();
-			$validator
+			$evaluator = new \Acl\Model\Authorization\UserAttributeEvaluator();
+			$evaluator
 				->setEntityManager($em);
 
-			return $validator;
+			return $evaluator;
+		},
+		'Acl\Authorization\UserAttributeEvaluatorListener' => function($sm) {
+			$evaluator = $sm->get('Acl\Authorization\UserAttributeEvaluator');
+			$authService = $sm->get('Acl\Authentication\Service');
+
+			$listener = new \Acl\Model\Authorization\UserAttributeEvaluatorListener();
+			$listener
+				->setAuthenticationService($authService)
+				->setUserAttributeEvaluator($evaluator);
+
+			return $listener;
 		},
 	),
 

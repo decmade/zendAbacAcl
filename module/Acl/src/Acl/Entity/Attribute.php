@@ -49,6 +49,9 @@ class Attribute extends AbstractEntity
 	 */
 	public function setName($value)
 	{
+		/*
+		 * apply the standard string input filter to $value
+		 */
 		$this->name = $this->filterStringInput($value);
 		return $this;
 	}
@@ -69,6 +72,9 @@ class Attribute extends AbstractEntity
 	 */
 	public function setValue($value)
 	{
+		/*
+		 * apply the standard string input filter to $value
+		 */
 		$this->value = $this->filterStringInput($value);
 		return $this;
 	}

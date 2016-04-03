@@ -37,6 +37,9 @@ class Result extends ZendResult
 	 */
 	public function setCode($value)
 	{
+		/*
+		 * apply the standard integer input filter to $value
+		 */
 		$this->code = $this->filterIntegerInput($value);
 		return $this;
 	}
@@ -49,6 +52,9 @@ class Result extends ZendResult
 	 */
 	public function setIdentity($value)
 	{
+		/*
+		 * apply the standard integer input filter to $value
+		 */
 		$this->identity = $this->filterIntegerInput($value);
 		return $this;
 	}
@@ -61,6 +67,10 @@ class Result extends ZendResult
 	 */
 	public function addMessage($value)
 	{
+		/*
+		 * apply the standard string input filter to $value
+		 * and append it to the collection of messages
+		 */
 		$this->messages[] = $this->filterStringInput($value);
 		return $this;
 	}

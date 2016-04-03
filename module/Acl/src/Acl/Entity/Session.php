@@ -50,6 +50,9 @@ class Session extends AbstractEntity
 	 */
 	public function setIpAddress($value)
 	{
+		/*
+		 * apply the standard string input filter to $value
+		 */
 		$this->ipAddress = $this->filterStringInput($value);
 		return $this;
 	}

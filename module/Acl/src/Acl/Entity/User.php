@@ -77,6 +77,9 @@ class User extends AbstractEntity
 	 */
 	public function setIdentity($value)
 	{
+		/*
+		 * apply the standard string input filter to $value
+		 */
 		$this->identity = $this->filterStringInput($value);
 		return $this;
 	}
@@ -104,6 +107,9 @@ class User extends AbstractEntity
 	 */
 	public function setCredential($value)
 	{
+		/*
+		 * apply the standard string input filter to $value
+		 */
 		$rawCredential = $this->filterStringInput($value);
 		/*
 		 * only if there is a valid string passed
@@ -132,6 +138,9 @@ class User extends AbstractEntity
 	 */
 	public function setStatus($value)
 	{
+		/*
+		 * apply the standard integer input filter to $value
+		 */
 		$this->status = $this->filterIntegerInput($value);
 		return $this;
 	}
