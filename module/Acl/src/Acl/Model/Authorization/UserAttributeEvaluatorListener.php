@@ -8,6 +8,7 @@ use Zend\EventManager\ListenerAggregateTrait;
 use Zend\EventManager\EventManagerInterface;
 use Zend\Mvc\MvcEvent;
 use Zend\Mvc\Router\RouteMatch;
+use Zend\Session\Container;
 
 
 class UserAttributeEvaluatorListener implements ListenerAggregateInterface
@@ -16,11 +17,10 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	use DependentObjectTrait;
 
 	const ACCESS_DQL_PARAM_NAME = 'accessDqlConfig';
-	const UNAUTHENTICATED_CONTROLLER = 'Acl\Controller\Index';
+	const UNAUTHENTICATED_CONTROLLER = 'Acl\Controller\User';
 	const UNAUTHENTICATED_ACTION = 'login';
 	const UNAUTHORIZED_CONTROLLER = 'Application\Controller\Index';
 	const UNAUTHORIZED_ACTION = 'index';
-	const DESTINATION_ROUTE_PARAM_NAME = 'destinationRoute';
 
 	/**
 	 *
@@ -33,6 +33,15 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	 * @var Zend\Authentication\AuthenticationService $authenticationService
 	 */
 	private $authenticationService;
+
+	/**
+	 * used to persist a destination while authentication is pending
+	 * once authentication is successfully, the user will be forwarded to
+	 * the route that triggered the authentication requirement
+	 *
+	 * @var Container
+	 */
+	private $routeForwardingContainer;
 
 
 	/**
@@ -56,6 +65,18 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	public function setAuthenticationService(AuthenticationService $authService)
 	{
 		$this->authenticationService = $authService;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param Container $container
+	 *
+	 * @return $this
+	 */
+	public function setRouteForwardingContainer(Container $container)
+	{
+		$this->routeForwardingContainer = $container;
 		return $this;
 	}
 
@@ -87,6 +108,12 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 
 		$evaluator = $this->userAttributeEvaluator;
 		$routeMatch = $event->getRouteMatch();
+
+		/*
+		 * remove any saved destination data if user
+		 * jumps off the authentication path
+		 */
+		$this->forgetSavedDestinationWhenNotAuthenticating($routeMatch);
 
 		/*
 		 * only act if there is an access configuration
@@ -131,6 +158,10 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 			array(
 				'name' => 'Zend\Authentication\AuthenticationService',
 				'object' => $this->authenticationService,
+			),
+			array(
+				'name' => 'Zend\Session\Container',
+				'object' => $this->routeForwardingContainer,
 			),
 		);
 	}
@@ -243,13 +274,20 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	 */
 	private function reconfigureRouteMatchAsUnathenticatedRoute(RouteMatch $routeMatch)
 	{
-		$newMatch = clone $routeMatch;
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
 
+		$routeForwarder = $this->routeForwardingContainer;
+		$routeForwarder->destination = $routeMatch;
+
+		$newMatch = clone $routeMatch;
 		$newMatch
 			->setParam('controller', self::UNAUTHENTICATED_CONTROLLER)
 			->setParam('action', self::UNAUTHENTICATED_ACTION)
 			->setParam(self::ACCESS_DQL_PARAM_NAME, null)
-			->setParam(self::DESTINATION_ROUTE_PARAM_NAME, $routeMatch->getMatchedRouteName());
+		;
 
 		return $newMatch;
 	}
@@ -291,5 +329,34 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 		$evaluator = $this->userAttributeEvaluator;
 
 		return $evaluator->evaluate($userId, $accessDqlConfig);
+	}
+
+	/**
+	 * this is a weird one
+	 *
+	 * i noticed a use case during testing where if an unauthenticated user attempts
+	 * to navigate to a protected route and the destination is saved,
+	 * they could click on anything else an avoid the authentication process
+	 * and since the saved destination information is never consumed, it persists
+	 * and if that user does authenitcate later, it will send them to that
+	 * initial route whether they had requested it or not
+	 *
+	 * this removes that saved information as soon as the user selects a route that does
+	 * not have the same controller that is used to
+	 * @param RouteMatch $routeMatch
+	 */
+	private function forgetSavedDestinationWhenNotAuthenticating(RouteMatch $routeMatch)
+	{
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
+
+		$routeForwardingContainer = $this->routeForwardingContainer;
+		$controller = $routeMatch->getParam('controller');
+
+		if ($controller != self::UNAUTHENTICATED_CONTROLLER) {
+			$routeForwardingContainer->offsetUnset('destination');
+		}
 	}
 }

@@ -1,0 +1,103 @@
+<?php
+	$destination = serialize($this->destination);
+	$form = $this->form;
+	$form->setAttribute('action', $this->url('acl/user/authenticate', array('destination', $destination)));
+	$form->setAttribute('class', 'form-horizontal');
+
+	foreach($form->getElements() as $element) {
+		/*
+		 * controls how far the form indents into
+		 * the page using Twitter:Bootstrap CSS
+		 *
+		 */
+		$defLabelAttributes = array(
+			'class' => 'control-label col-md-2',
+		);
+
+		/*
+		 * default class for all input controls
+		 * for the Twitter:Bootstrap CSS framework
+		 * to apply standard styling
+		 */
+		$defElementClass = 'form-control';
+
+		$element->setLabelAttributes( $defLabelAttributes);
+		$element->setAttribute('class', $defElementClass);
+		$element->setAttribute('id', $element->getName());
+	}
+
+	/*
+	 * the submit button is a little different, it uses
+	 * a button class to proper rendering
+	 *
+	 */
+	$form->get('submit')->setAttribute('class', 'btn btn-success');
+
+	$defaultInputColumnWidth = 3;
+
+?>
+<div class="row">
+	<div class="page-header">
+		<h1>User Login</h1>
+	</div>
+</div>
+
+<div class="row">
+	<?php echo $this->form()->openTag($form); ?>
+
+	<div class="form-group">
+		<?php echo $this->formLabel($form->get('identity')); ?>
+		<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+			<?php echo $this->formInput($form->get('identity')); ?>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<?php echo $this->formLabel($form->get('credential')); ?>
+		<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+			<?php echo $this->formInput($form->get('credential')); ?>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="<?php echo $form->get('identity')->getLabelAttributes()['class']; ?>">&nbsp;</div>
+		<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+			<?php echo $this->formSubmit($form->get('submit')); ?>
+		</div>
+	</div>
+
+	<?php echo $this->form()->closeTag(); ?>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		automaticFocusElection();
+	});
+
+
+
+	function automaticFocusElection()
+	{
+		/*
+			add the fields you wish to bring focus to
+			in order of which you would like to consider
+			them for focus. this function will bring focus
+			the first input ID in the list that has nothing
+			entered in it already
+		*/
+		var inputsToFocusOn = [
+			'identity',
+			'credential',
+		];
+
+		for (i = 0; i < inputsToFocusOn.length; i++) {
+			var id = inputsToFocusOn[i];
+			var inputSelector = '#' + id;
+
+			if ( $(inputSelector).val() == '') {
+				$(inputSelector).focus();
+				break;
+			}
+		}
+	}
+</script>

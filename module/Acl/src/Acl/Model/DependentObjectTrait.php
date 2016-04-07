@@ -33,9 +33,9 @@ trait DependentObjectTrait
 	 *
 	 * @throws Exception
 	 */
-	protected function checkDependencies()
+	protected function checkDependencies($getConfigMethodName = 'getDependenciesConfig')
 	{
-		$dependencies = $this->getDependenciesConfig();
+		$dependencies = $this->$getConfigMethodName();
 
 		/*
 		 * loop through the dependencies and check to see

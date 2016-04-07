@@ -10,7 +10,7 @@ use Acl\Model\StandardInputFiltersTrait;
  * @author John W. Brown, Jr. <john.w.brown.jr@gmail.com>
  *
  */
-abstract class AbstractEntity
+abstract class AbstractEntity implements EntityInterface
 {
 	use StandardInputFiltersTrait;
 

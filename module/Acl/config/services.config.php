@@ -8,6 +8,8 @@ return array(
 		'Acl\Entity\Session' => 'Acl\Entity\Session',
 		'Acl\Entity\User' => 'Acl\Entity\User',
 		'Acl\DefaultViewModel' => 'Zend\View\Model\ViewModel',
+		'Acl\Wrapper\Attribute' => 'Acl\Model\Wrapper\AttributeWrapper',
+		'Acl\Wrapper\Session' => 'Acl\Model\Wrapper\SessionWrapper',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -88,11 +90,14 @@ return array(
 		'Acl\Authorization\UserAttributeEvaluatorListener' => function($sm) {
 			$evaluator = $sm->get('Acl\Authorization\UserAttributeEvaluator');
 			$authService = $sm->get('Acl\Authentication\Service');
+			$routeForwardingContainer = $sm->get('Acl\Authentication\Storage\RouteForwarding');
 
 			$listener = new \Acl\Model\Authorization\UserAttributeEvaluatorListener();
 			$listener
 				->setAuthenticationService($authService)
-				->setUserAttributeEvaluator($evaluator);
+				->setUserAttributeEvaluator($evaluator)
+				->setRouteForwardingContainer($routeForwardingContainer)
+			;
 
 			return $listener;
 		},
@@ -111,6 +116,37 @@ return array(
 				->setViewModel($view);
 
 			return $listener;
+		},
+		'Acl\Factory\User' => function($sm) {
+			$user = $sm->get('Acl\Entity\User');
+
+			$factory = new \Acl\Model\Factory\UserFactory();
+			$factory
+				->setPrototype($user);
+
+			return $factory;
+		},
+		'Acl\Wrapper\User' => function($sm) {
+			$attributeWrapper = $sm->get('Acl\Wrapper\Attribute');
+			$sessionWrapper = $sm->get('Acl\Wrapper\Session');
+
+			$wrapper = new \Acl\Model\Wrapper\UserWrapper();
+			$wrapper
+				->setAttributeWrapper($attributeWrapper)
+				->setSessionWrapper($sessionWrapper)
+			;
+
+			return $wrapper;
+		},
+		'Acl\Form\UserLogin' => function($sm) {
+
+			$form = new \Acl\Model\Form\UserLoginForm();
+
+			return $form;
+		},
+		'Acl\Authentication\Storage\RouteForwarding' => function($sm) {
+			$namespace = 'Zend\Acl\RouteForwarding';
+			return new \Zend\Session\Container($namespace);
 		},
 	),
 

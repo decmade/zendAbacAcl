@@ -4,6 +4,7 @@ namespace Acl\Model\Authorization;
 use Acl\Model\DependentObjectTrait;
 use Doctrine\ORM\EntityManager;
 use Acl\Model\StandardInputFiltersTrait;
+use Acl\Entity\User;
 
 /**
  * This class validates that the attributes of the user passed to
@@ -246,7 +247,8 @@ class UserAttributeEvaluator
 			/*
 			 * build the dql expression to pass to the entity manager
 			 */
-			$dql = sprintf("SELECT a FROM Acl\Entity\Attribute a JOIN a.user u WHERE u.id = %s AND ( %s )",
+			$dql = sprintf("SELECT a FROM Acl\Entity\Attribute a JOIN a.user u WHERE u.status = %s AND u.id = %s AND ( %s )",
+					User::STATUS_ACTIVE,
 					$userId,
 					$clause
 			);

@@ -27,28 +27,51 @@ return array(
 			),
 			'may_terminate' => true,
 			'child_routes' => array(
-				'login' => array(
-					'type' => 'Zend\Mvc\Router\Http\Segment',
+				'user' => array(
+					'type' => 'segment',
 					'options' => array(
-						'route' => '/login',
+						'route' => '/user',
 						'defaults' => array(
-							'controller' => 'Acl\Controller\Index',
-							'action' => 'login',
+							'controller' => 'Acl\Controller\User',
+							'action' => 'index',
 							$aclDqlKey => null,
 						),
 					),
-				),
-				'logout' => array(
-				'type' => 'Zend\Mvc\Router\Http\Segment',
-				'options' => array(
-					'route' => '/logout',
-					'defaults' => array(
-						'controller' => 'Acl\Controller\Index',
-						'action' => 'logout',
-						$aclDqlKey => null,
+					'may_terminate' => true,
+					'child_routes' => array(
+						'login' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/login',
+								'defaults' => array(
+									'action' => 'login',
+									$aclDqlKey => null,
+								),
+							),
+						),
+						'authenticate' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/authenticate',
+								'defaults' => array(
+									'action' => 'authenticate',
+									$aclDqlKey => null,
+								),
+							),
+						),
+						'logout' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/logout',
+								'defaults' => array(
+									'action' => 'logout',
+									$aclDqlKey => null,
+								),
+							),
+						),
 					),
 				),
-				),
+
 			),
 		),
 	),
