@@ -1,0 +1,76 @@
+<?php
+	$user = $this->currentUser();
+	$isGuest = ($user->getId() == 0);
+
+	/*
+	 * customize styles, buttons classes, and dropdown
+	 * actions based on whether or not an authenticated
+	 * user exists
+	 */
+	if ($isGuest) {
+
+		$dropdownActions = array(
+			array(
+				'label' => 'Login',
+				'icon' => 'glyphicon glyphicon-log-in',
+				'url' => $this->url('acl/login')
+			),
+		);
+
+		$btnClasses = array(
+			'btn',
+			'btn-danger',
+		);
+
+		$userStyles = array(
+			'font-style:italic',
+			'color:#ddd',
+		);
+	} else {
+		$iconHtml = '<span class="glyphicon glyphicon-user"></span>';
+
+		$dropdownActions = array(
+			array(
+				'label' => 'Profile',
+				'icon' => 'glyphicon glyphicon-user',
+				'url' => $this->url('acl'),
+			),
+			array(
+				'label' => 'Home',
+				'icon' => 'glyphicon glyphicon-home',
+				'url' => $this->url('home'),
+			),
+			array(), // an empty array creates a divider
+			array(
+				'label' => 'Log Out',
+				'icon' => 'glyphicon glyphicon-log-out',
+				'url' => $this->url('acl/logout')
+			),
+		);
+
+		$btnClasses = array(
+			'btn',
+			'btn-success',
+		);
+	}
+
+?>
+<div id="userBadge" class="btn-group">
+
+	<!--  MAIN BUTTON with user identity -->
+	<a href="<?php echo $dropdownActions[0]['url']; ?>" class="<?php echo implode(' ', $btnClasses); ?>" style="min-width:50px;">
+		<span class="<?php echo $dropdownActions[0]['icon']; ?>"></span>
+		&nbsp;
+		<span style="<?php echo implode('; ', $userStyles); ?>"><?php echo $user->getIdentity(); ?></span>
+	</a>
+
+	<!-- DROWPDOWN BUTTON with caret symbol on it -->
+	<button class="<?php echo implode(' ', $btnClasses); ?> drowndown-toogle" data-toggle="dropdown">
+		<span class="caret"></span>
+	</button>
+	<!--  DROPDOWN ACTIONS rendered by partial template -->
+	<ul class="dropdown-menu">
+		<?php echo $this->partialLoop('acl/user/partial/action', $dropdownActions); ?>
+	</ul>
+
+</div>

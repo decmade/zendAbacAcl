@@ -1,0 +1,16 @@
+<?php
+	$label = $this->label;
+	$url = $this->url;
+	$icon = $this->icon;
+?>
+<?php if($url == null) :?>
+	<li role="separator" class="divider"></li>
+<?php else : ?>
+	<li>
+		<a href="<?php echo $url;?>">
+			<span class="<?php echo $icon; ?>"></span>
+			&nbsp;
+			<?php echo $label;?>
+		</a>
+	</li>
+<?php endif; ?>

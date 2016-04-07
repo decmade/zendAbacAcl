@@ -6,7 +6,8 @@ return array(
 	'invokables' => array(
 		'Acl\Authentication\Result' => 'Acl\Model\Authentication\Result',
 		'Acl\Entity\Session' => 'Acl\Entity\Session',
-		'Acl\Authorization\AttributePattern' => 'Acl\Model\Authorization\AttributePattern',
+		'Acl\Entity\User' => 'Acl\Entity\User',
+		'Acl\DefaultViewModel' => 'Zend\View\Model\ViewModel',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -92,6 +93,22 @@ return array(
 			$listener
 				->setAuthenticationService($authService)
 				->setUserAttributeEvaluator($evaluator);
+
+			return $listener;
+		},
+		'Acl\GuestUser' => function($sm) {
+			$user = $sm->get('Acl\Entity\User');
+			$user
+				->setIdentity('guest');
+
+			return $user;
+		},
+		'Acl\View\CurrentUserListener' => function($sm) {
+			$view = $sm->get('Acl\DefaultViewModel');
+
+			$listener = new \Acl\Model\View\CurrentUserListener();
+			$listener
+				->setViewModel($view);
 
 			return $listener;
 		},

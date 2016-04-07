@@ -72,6 +72,12 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 		$this->listeners[]  = $em->attach(MvcEvent::EVENT_DISPATCH, array($this, 'onDispatch'), 100);
 	}
 
+	/**
+	 * actions for the UserAttributeEvalutor to perform
+	 * whenever a route is dispatched
+	 *
+	 * @param MvcEvent $event
+	 */
 	public function onDispatch(MvcEvent $event)
 	{
 		/*
@@ -130,9 +136,9 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	}
 
 	/**
-	 * true if the routeMath passed has the ACCESS_DQL_PARAM_NAME key and
-	 * the value of the key is not null
-	 * as on of its parametiers
+	 * true if the routeMatch passed has the ACCESS_DQL_PARAM_NAME key
+	 * as a parameter and the value of the key is an array with elements
+	 * or a string that is not empty
 	 *
 	 * @param RouteMatch $routeMatch
 	 *
@@ -141,11 +147,25 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	private function hasAccessDqlConfig(RouteMatch $routeMatch)
 	{
 		if (array_key_exists(self::ACCESS_DQL_PARAM_NAME, $routeMatch->getParams()) ) {
-			if ( $routeMatch->getParam(self::ACCESS_DQL_PARAM_NAME) == null) {
-				return false;
-			} else {
-				return true;
+			$paramValue = $routeMatch->getParam(self::ACCESS_DQL_PARAM_NAME);
+
+			switch(true) {
+				case ( is_array($paramValue)) :
+					if (count($paramValue) == 0 ) {
+						return false;
+					} else {
+						return true;
+					}
+				case ( is_string($paramValue)) :
+					if (empty($paramValue)) {
+						return false;
+					} else {
+						return true;
+					}
+				default :
+					return false;
 			}
+
 		} else {
 			return false;
 		}
