@@ -9,7 +9,7 @@ use Zend\Mvc\MvcEvent;
 use Zend\View\Model\ViewModel;
 
 
-class CurrentUserListener implements ListenerAggregateInterface
+class FlashMessengerListener implements ListenerAggregateInterface
 {
 	use ListenerAggregateTrait;
 	use DependentObjectTrait;
@@ -64,7 +64,7 @@ class CurrentUserListener implements ListenerAggregateInterface
 		$view = $this->getViewModel();
 		$view
 			->setTemplate($templateName)
-			->setCaptureTo('userBadge');
+			->setCaptureTo('flashMessages');
 
 		$currentLayout->addChild($view);
 	}
@@ -114,8 +114,8 @@ class CurrentUserListener implements ListenerAggregateInterface
 	{
 		$templateParts = array(
 			'acl',
-			'user',
-			'badge',
+			'messages',
+			'messages',
 		);
 
 		return implode(DIRECTORY_SEPARATOR, $templateParts);

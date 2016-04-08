@@ -10,6 +10,7 @@ return array(
 		'Acl\DefaultViewModel' => 'Zend\View\Model\ViewModel',
 		'Acl\Wrapper\Attribute' => 'Acl\Model\Wrapper\AttributeWrapper',
 		'Acl\Wrapper\Session' => 'Acl\Model\Wrapper\SessionWrapper',
+		'Acl\Form\UserLogin\InputFilter' => 'Acl\Model\Form\UserLoginFormInputFilter',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -60,24 +61,6 @@ return array(
 
 			return $service;
 		},
-// 		'Acl\Authorization\AttributePattern\Factory' => function($sm) {
-// 			$prototype = $sm->get('Acl\Authorization\AttributePattern');
-
-// 			$factory = new \Acl\Model\Authorization\AttributePatternFactory();
-// 			$factory
-// 				->setPrototype($prototype);
-
-// 			return $factory;
-// 		},
-// 		'Acl\Authorization\AttributePatternSetConfigParser' => function($sm) {
-// 			$factory = $sm->get('Acl\Authorization\AttributePattern\Factory');
-
-// 			$parser = new \Acl\Model\Authorization\AttributePatternSetConfigParser();
-// 			$parser
-// 				->setAttributePatternFactory($factory);
-
-// 			return $parser;
-// 		},
 		'Acl\Authorization\UserAttributeEvaluator' => function($sm) {
 			$em = $sm->get('Acl\EntityManager');
 
@@ -87,7 +70,7 @@ return array(
 
 			return $evaluator;
 		},
-		'Acl\Authorization\UserAttributeEvaluatorListener' => function($sm) {
+		'Acl\Listener\UserAttributeEvaluatorListener' => function($sm) {
 			$evaluator = $sm->get('Acl\Authorization\UserAttributeEvaluator');
 			$authService = $sm->get('Acl\Authentication\Service');
 			$routeForwardingContainer = $sm->get('Acl\Authentication\Storage\RouteForwarding');
@@ -101,14 +84,7 @@ return array(
 
 			return $listener;
 		},
-		'Acl\GuestUser' => function($sm) {
-			$user = $sm->get('Acl\Entity\User');
-			$user
-				->setIdentity('guest');
-
-			return $user;
-		},
-		'Acl\View\CurrentUserListener' => function($sm) {
+		'Acl\Listener\CurrentUserListener' => function($sm) {
 			$view = $sm->get('Acl\DefaultViewModel');
 
 			$listener = new \Acl\Model\View\CurrentUserListener();
@@ -117,6 +93,23 @@ return array(
 
 			return $listener;
 		},
+		'Acl\Listener\FlashMessengerListener' => function($sm) {
+			$view = $sm->get('Acl\DefaultViewModel');
+
+			$listener = new \Acl\Model\View\FlashMessengerListener();
+			$listener
+				->setViewModel($view);
+
+			return $listener;
+		},
+		'Acl\GuestUser' => function($sm) {
+			$user = $sm->get('Acl\Entity\User');
+			$user
+				->setIdentity('guest');
+
+			return $user;
+		},
+
 		'Acl\Factory\User' => function($sm) {
 			$user = $sm->get('Acl\Entity\User');
 
@@ -140,7 +133,10 @@ return array(
 		},
 		'Acl\Form\UserLogin' => function($sm) {
 
+			$inputFilter = $sm->get('Acl\Form\UserLogin\InputFilter');
+
 			$form = new \Acl\Model\Form\UserLoginForm();
+			$form->setInputFilter($inputFilter);
 
 			return $form;
 		},

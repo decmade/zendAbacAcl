@@ -9,6 +9,8 @@ use Zend\Session\Container;
 
 class UserController extends AbstractEntityController
 {
+	const USER_REPOSITORY_CLASS = 'Acl\Entity\User';
+
 	/**
 	 *
 	 * @var Form $loginForm
@@ -89,6 +91,9 @@ class UserController extends AbstractEntityController
 		return array();
 	}
 
+	/**
+	 * present login form to unauthenticated user
+	 */
 	public function loginAction()
 	{
 		/*
@@ -104,6 +109,9 @@ class UserController extends AbstractEntityController
 		);
 	}
 
+	/**
+	 * authenticate user, process login attempt
+	 */
 	public function authenticateAction()
 	{
 		/*
@@ -114,29 +122,65 @@ class UserController extends AbstractEntityController
 
 		$authService = $this->authenticationService;
 		$authAdapter = $this->authenticationAdapter;
+		$form = $this->loginForm;
 
-		$identity = $this->params()->fromPost('identity');
-		$credential = $this->params()->fromPost('credential');
+		$form->setData($this->params()->fromPost());
 
-		/*
-		 * TODO: need loginForm validation here
-		 */
+		if ($form->isValid()) {
+			$data = $form->getData();
 
-		$authAdapter
-			->setIdentity($identity)
-			->setCredential($credential);
+			$authAdapter
+				->setIdentity($data['identity'])
+				->setCredential($data['credential']);
 
-		$result = $authService->authenticate($authAdapter);
+			$result = $authService->authenticate($authAdapter);
 
-		if ($result->getCode() == $result::SUCCESS) {
-			$destination = $this->getSavedDestinationInformation();
-			$this->redirect()->toRoute($destination['route'], $destination['parameters']);
+			if ($result->getCode() == $result::SUCCESS) {
+
+				/*
+				 * add failure messages to flash messenger plugin
+				 */
+				foreach($result->getMessages() as $message) {
+					$this->queueFlashMessage($message, 'success', $result->getIdentity());
+				}
+
+				/*
+				 * redirect to initial destination, which defaults to the home
+				 * route if there was no attempt to access protected content
+				 */
+				$destination = $this->getSavedDestinationInformation();
+				$this->redirect()->toRoute($destination['route'], $destination['parameters']);
+			} else {
+
+				/*
+				 * add failure messages to flash messenger plugin
+				 */
+				foreach($result->getMessages() as $message) {
+					$this->queueFlashMessage($message, 'error');
+				}
+
+				$this->redirect()->toRoute('acl/user/login');
+			}
+
 		} else {
+			/*
+			 * add all error messages to the flashMessenger plugin
+			 */
+			foreach($form->getMessages() as $inputName => $messages) {
+				foreach($messages as $message) {
+					$this->flashMessenger()->addErrorMessage($message);
+				}
+			}
+
 			$this->redirect()->toRoute('acl/user/login');
 		}
-
 	}
 
+	/**
+	 * remove any record of an authenticated use
+	 *
+	 * @return \Zend\Http\Response
+	 */
 	public function logoutAction()
 	{
 		/*
@@ -146,11 +190,19 @@ class UserController extends AbstractEntityController
 
 		$authService = $this->authenticationService;
 
+		/*
+		 * queue up a flash message for user feedback
+		 */
+		$this->queueFlashMessage("User %s Has Logged Out", 'info', $authService->getIdentity());
+
 		$authService->clearIdentity();
 
 		return $this->redirect()->toRoute('home');
 	}
 
+	/**
+	 * present form that is user profile
+	 */
 	public function editAction()
 	{
 		return array();
@@ -235,5 +287,35 @@ class UserController extends AbstractEntityController
 		}
 
 		return $destination;
+	}
+
+	/**
+	 * $messageType can be one of:
+	 * 		'success'
+	 * 		'info'
+	 * 		'warning',
+	 *		'error'
+	 *
+	 * @param int $userId
+	 * @param string $messageTemplate // using "%s" parameter to include username
+	 */
+	private function queueFlashMessage($messageTemplate, $messageType = 'info', $userId = 0)
+	{
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
+
+		$em = $this->entityManager;
+
+		/*
+		 * add success message to flash messenger plugin
+		 */
+		$user = $em->getRepository(self::USER_REPOSITORY_CLASS)->find($userId);
+		$username = ($user) ? $user->getIdentity() : 'guest';
+		$message = sprintf($messageTemplate, $username);
+
+		$this->flashMessenger()->addMessage($message, $messageType);
+
 	}
 }

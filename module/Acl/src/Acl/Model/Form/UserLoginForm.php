@@ -47,15 +47,5 @@ class UserLoginForm extends Form
 				'value' => 'Login',
 			),
 		));
-
-// 		foreach($this->getElements() as $element) {
-// 			die($element->getType());
-// 			$type = $element->getType();
-
-// 			switch($type) {
-// 				case 'text' :
-// 					break;
-// 			}
-// 		}
 	}
 }
