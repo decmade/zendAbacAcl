@@ -23,7 +23,7 @@ class UserProfileForm extends Form
 		 * password field
 		 */
 		$this->add(array(
-			'name' => 'newCredential1',
+			'name' => 'newCredential-1',
 			'type'=> 'password',
 			'options' => array(
 				'label' => 'New Password',
@@ -37,7 +37,7 @@ class UserProfileForm extends Form
 		 * password field
 		 */
 		$this->add(array(
-				'name' => 'newCredential2',
+				'name' => 'newCredential-2',
 				'type'=> 'password',
 				'options' => array(
 						'label' => 'Confirm Password',
@@ -54,7 +54,7 @@ class UserProfileForm extends Form
 			'name' => 'submit',
 			'type' => 'submit',
 			'attributes' => array(
-				'value' => 'Save',
+				'value' => 'Change Password',
 			),
 		));
 

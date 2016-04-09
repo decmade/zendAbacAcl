@@ -1,0 +1,184 @@
+<?php
+	$form = $this->form;
+	$form->setAttribute('action', $this->url('acl/user/save'));
+	$form->setAttribute('class', 'form-horizontal');
+	$user = $this->currentUser();
+
+	foreach($form->getElements() as $element) {
+		/*
+		 * controls how far the form indents into
+		 * the page using Twitter:Bootstrap CSS
+		 *
+		 */
+		$defLabelAttributes = array(
+			'class' => 'control-label col-md-2',
+		);
+
+		/*
+		 * default class for all input controls
+		 * for the Twitter:Bootstrap CSS framework
+		 * to apply standard styling
+		 */
+		$defElementClass = 'form-control';
+
+		$element->setLabelAttributes( $defLabelAttributes);
+		$element->setAttribute('class', $defElementClass);
+		$element->setAttribute('id', $element->getName());
+	}
+
+	/*
+	 * the submit button is a little different, it uses
+	 * a button class to proper rendering
+	 *
+	 */
+	$form->get('submit')->setAttribute('class', 'btn btn-success');
+
+	$defaultInputColumnWidth = 3;
+
+?>
+<div class="row">
+	<div class="page-header">
+		<h1>User Profile</h1>
+	</div>
+</div>
+
+<div class="row">
+
+	<div class="col-md-2">
+		<p style="font-size:12px;">
+			<span class="glyphicon glyphicon-user" style="font-size:100px;"></span><br />
+			<strong>Identity:</strong>&nbsp;<?php echo $user->getIdentity(); ?><br />
+			<strong>Status:</strong>&nbsp;<?php
+				switch($user->getStatus()) {
+					case $user::STATUS_ACTIVE :
+						echo '<span class="badge alert-success">Active</span>';
+						break;
+					case $user::STATUS_INACTIVE :
+						echo '<span class="badge alert-danger">Inactive</span>';
+						break;
+					default :
+						echo '<span class="badge alert-warning">Disabled</span>';
+						break;
+				};
+			?><br />
+			<strong>Created:</strong>&nbsp;<?php
+				$addedDate = $user->getAdded();
+				echo $addedDate->format('m/d/Y');
+			?><br />
+
+		</p>
+	</div>
+
+	<div class="col-md-10">
+		<?php echo $this->form()->openTag($form); ?>
+
+		<!--  NEW PASSWORD INPUT -->
+		<div class="form-group">
+			<?php echo $this->formLabel($form->get('newCredential-1')); ?>
+			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+				<?php echo $this->formInput($form->get('newCredential-1')); ?>
+			</div>
+		</div>
+
+		<!--  CONFIRM NER PASSWORD INPUT -->
+		<div class="form-group">
+			<?php echo $this->formLabel($form->get('newCredential-2')); ?>
+			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+				<div class="input-group">
+					<?php echo $this->formInput($form->get('newCredential-2')); ?>
+					<span class="input-group-addon" id="confirmPasswordInputGroup"><span class="glyphicon glyphicon-pencil" id="confirmPasswordGlyphicon"></span></span>
+				</div>
+			</div>
+		</div>
+
+		<!--  SUBMIT BUTTON -->
+		<div class="form-group">
+			<div class="<?php
+				$elements = array_values($form->getElements());
+				$firstElement = $elements[0];
+				echo $firstElement->getLabelAttributes()['class']; ?>">&nbsp;</div>
+			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+				<?php echo $this->formSubmit($form->get('submit')); ?>
+			</div>
+		</div>
+
+		<?php echo $this->form()->closeTag(); ?>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		automaticFocusElection();
+
+		$("input[id|='newCredential']").keyup( function() {
+			setConditionalFormattingOfConfirmPassword();
+		});
+
+	});
+
+	/*
+		set the formatting of the Confirm Password input group add-on
+		according to whether or not the two password input fields are
+		equal
+	*/
+	function setConditionalFormattingOfConfirmPassword()
+	{
+		var confirmationInputGroup = $('#confirmPasswordInputGroup');
+		var confirmedInputGroupClass = 'input-group-addon alert-success';
+		var unConfirmedInputGroupClass = 'input-group-addon alert-danger';
+
+		var confirmationGlyphicon = $('#confirmPasswordGlyphicon');
+		var confirmedGlyphiconClass = 'glyphicon glyphicon-ok';
+		var unConfirmedGlyphiconClass = 'glyphicon glyphicon-remove';
+
+
+		/*
+			if the password confirmed, set the addon to be a green check
+			otherwise a red x
+		*/
+		if ( newPasswordConfirmed() ) {
+			confirmationGlyphicon.attr('class', confirmedGlyphiconClass);
+			confirmationInputGroup.attr('class', confirmedInputGroupClass);
+
+		} else {
+			confirmationGlyphicon.attr('class', unConfirmedGlyphiconClass);
+			confirmationInputGroup.attr('class', unConfirmedInputGroupClass);
+		}
+
+	}
+
+	/*
+		return true of the confirmation password
+		matches the new password, false if not
+	*/
+	function newPasswordConfirmed()
+	{
+		return ( $('#<?php echo $form->get('newCredential-1')->getAttribute('id'); ?>').val() == $('#<?php echo $form->get('newCredential-2')->getAttribute('id'); ?>').val() );
+	}
+
+
+	function automaticFocusElection()
+	{
+		/*
+			add the fields you wish to bring focus to
+			in order of which you would like to consider
+			them for focus. this function will bring focus
+			the first input ID in the list that has nothing
+			entered in it already
+		*/
+		var inputsToFocusOn = [
+			'newCredential-1',
+			'newCredential-2',
+		];
+
+		for (i = 0; i < inputsToFocusOn.length; i++) {
+			var id = inputsToFocusOn[i];
+			var inputSelector = '#' + id;
+
+			if ( $(inputSelector).val() == '') {
+				$(inputSelector).focus();
+				break;
+			}
+		}
+	}
+</script>

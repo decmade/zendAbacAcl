@@ -21,6 +21,7 @@ return array(
 			$factory = $sm->get('Acl\Factory\User');
 			$wrapper = $sm->get('Acl\Wrapper\User');
 			$loginForm = $sm->get('Acl\Form\UserLogin');
+			$profileForm = $sm->get('Acl\Form\UserProfile');
 			$authService = $sm->get('Acl\Authentication\Service');
 			$authAdapter = $sm->get('Acl\Authentication\Adapter');
 			$routeForwardingContainer = $sm->get('Acl\Authentication\Storage\RouteForwarding');
@@ -31,6 +32,7 @@ return array(
 				->setFactory($factory)
 				->setWrapper($wrapper)
 				->setLoginForm($loginForm)
+				->setProfileForm($profileForm)
 				->setAuthenticationService($authService)
 				->setAuthenticationAdapter($authAdapter)
 				->setRouteForwardingContainer($routeForwardingContainer)

@@ -3,6 +3,7 @@ namespace Acl\Controller;
 
 
 use Zend\Form\Form;
+use Zend\Authentication\Result;
 use Zend\Authentication\AuthenticationService;
 use Acl\Model\Authentication\DoctrineAuthenticationAdapter;
 use Zend\Session\Container;
@@ -13,19 +14,25 @@ class UserController extends AbstractEntityController
 
 	/**
 	 *
-	 * @var Form $loginForm
+	 * @var Form
 	 */
 	protected $loginForm;
 
 	/**
 	 *
-	 * @var AuthenticationService $authenticationService
+	 * @var Form
+	 */
+	protected $profileForm;
+
+	/**
+	 *
+	 * @var AuthenticationService
 	 */
 	protected $authenticationService;
 
 	/**
 	 *
-	 * @var DoctrineAuthenticationAdapter $authenticationAdapter
+	 * @var DoctrineAuthenticationAdapter
 	 */
 	protected $authenticationAdapter;
 
@@ -40,13 +47,25 @@ class UserController extends AbstractEntityController
 
 	/**
 	 *
-	 * @param Form $loginForm
+	 * @param Form $form
 	 *
 	 * @return $this
 	 */
-	public function setLoginForm(Form $loginForm)
+	public function setLoginForm(Form $form)
 	{
-		$this->loginForm = $loginForm;
+		$this->loginForm = $form;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param Form $form
+	 *
+	 * @return $this
+	 */
+	public function setProfileForm(Form $form)
+	{
+		$this->profileForm = $form;
 		return $this;
 	}
 
@@ -136,41 +155,22 @@ class UserController extends AbstractEntityController
 			$result = $authService->authenticate($authAdapter);
 
 			if ($result->getCode() == $result::SUCCESS) {
-
-				/*
-				 * add failure messages to flash messenger plugin
-				 */
-				foreach($result->getMessages() as $message) {
-					$this->queueFlashMessage($message, 'success', $result->getIdentity());
-				}
+				$this->queueAuthenticationResultMessages($result, 'success');
 
 				/*
 				 * redirect to initial destination, which defaults to the home
-				 * route if there was no attempt to access protected content
+				 * route if there is nothing saved
 				 */
 				$destination = $this->getSavedDestinationInformation();
 				$this->redirect()->toRoute($destination['route'], $destination['parameters']);
 			} else {
-
-				/*
-				 * add failure messages to flash messenger plugin
-				 */
-				foreach($result->getMessages() as $message) {
-					$this->queueFlashMessage($message, 'error');
-				}
+				$this->queueAuthenticationResultMessages($result);
 
 				$this->redirect()->toRoute('acl/user/login');
 			}
 
 		} else {
-			/*
-			 * add all error messages to the flashMessenger plugin
-			 */
-			foreach($form->getMessages() as $inputName => $messages) {
-				foreach($messages as $message) {
-					$this->flashMessenger()->addErrorMessage($message);
-				}
-			}
+			$this->queueFormValidationMessages($form);
 
 			$this->redirect()->toRoute('acl/user/login');
 		}
@@ -193,7 +193,9 @@ class UserController extends AbstractEntityController
 		/*
 		 * queue up a flash message for user feedback
 		 */
-		$this->queueFlashMessage("User %s Has Logged Out", 'info', $authService->getIdentity());
+		$user = $this->getCurrentUser();
+		$message = sprintf("User %s Has Logged Out", $user->getIdentity());
+		$this->queueMessage($message, 'info');
 
 		$authService->clearIdentity();
 
@@ -205,12 +207,48 @@ class UserController extends AbstractEntityController
 	 */
 	public function editAction()
 	{
-		return array();
+		/*
+		 * check dependencies
+		 */
+		$this->checkDependencies('getLocalDependenciesConfig');
+
+		return array(
+			'form' => $this->profileForm,
+		);
 	}
 
 	public function saveAction()
 	{
-		return array();
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
+		$this->checkDependencies('getLocalDependenciesConfig');
+
+		$em = $this->entityManager;
+		$form = $this->profileForm;
+		$user = $this->getCurrentUser();
+
+		$form->setData($this->params()->fromPost());
+
+		if ($form->isValid()) {
+			$data = $form->getData();
+
+
+			if ($data['newCredential-1'] == $data['newCredential-2']) {
+				$user->setCredential($data['newCredential-1']);
+				$em->flush();
+				$this->queueMessage(sprintf("User %s's Password Has Been Updated", $user->getIdentity()), 'success');
+			} else {
+				$this->queueMessage(sprintf("New Passwords and Confirm Password Fields Do Not Match"),'error');
+				$this->queueMessage(sprintf("User %s's Password Was Not Updated.", $user->getIdentity()), 'info');
+			}
+		} else {
+			$this->queueFormValidationMessages($form);
+			$this->queueMessage(sprintf("User %s's Password Was Not Updated.", $user->getIdentity()), 'info');
+		}
+
+		$this->redirect()->toRoute('acl/user/edit');
 	}
 
 	/**
@@ -220,8 +258,12 @@ class UserController extends AbstractEntityController
 	{
 		return array(
 			array(
-				'name' => 'Zend\Form\Form',
+				'name' => 'Zend\Form\Form ($loginForm)',
 				'object' => $this->loginForm,
+			),
+			array(
+				'name' => 'Zend\Form\Form ($profileForm)',
+				'object' => $this->profileForm,
 			),
 			array(
 				'name' => 'Zend\Authentication\AuthenticationService',
@@ -290,6 +332,62 @@ class UserController extends AbstractEntityController
 	}
 
 	/**
+	 * get the currently authenticated user
+	 *
+	 * @return User|null
+	 */
+	private function getCurrentUser()
+	{
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
+
+		$authService = $this->authenticationService;
+		$em = $this->entityManager;
+
+		if ($authService->hasIdentity()) {
+			$id = $authService->getIdentity();
+			$user = $em->getRepository(self::USER_REPOSITORY_CLASS)->find($id);
+			return $user;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 *
+	 * @param Form $form
+	 * @param string $type
+	 */
+	private function queueFormValidationMessages(Form $form, $type = 'error')
+	{
+	/*
+		/*
+		 * add authentication service messages to flash messenger plugin
+		 */
+		foreach($form->getMessages() as $message) {
+			$this->queueMessage($message, $type);
+		}
+	}
+
+	/**
+	 *
+	 * @param Result $result
+	 * @param string $type
+	 */
+	private function queueAuthenticationResultMessages(Result $result, $type = 'error')
+	{
+	/*
+		/*
+		 * add authentication service messages to flash messenger plugin
+		 */
+		foreach($result->getMessages() as $message) {
+			$this->queueMessage($message, $type);
+		}
+	}
+
+	/**
 	 * $messageType can be one of:
 	 * 		'success'
 	 * 		'info'
@@ -299,22 +397,8 @@ class UserController extends AbstractEntityController
 	 * @param int $userId
 	 * @param string $messageTemplate // using "%s" parameter to include username
 	 */
-	private function queueFlashMessage($messageTemplate, $messageType = 'info', $userId = 0)
+	private function queueMessage($message, $messageType = 'info')
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
-
-		$em = $this->entityManager;
-
-		/*
-		 * add success message to flash messenger plugin
-		 */
-		$user = $em->getRepository(self::USER_REPOSITORY_CLASS)->find($userId);
-		$username = ($user) ? $user->getIdentity() : 'guest';
-		$message = sprintf($messageTemplate, $username);
-
 		$this->flashMessenger()->addMessage($message, $messageType);
 
 	}

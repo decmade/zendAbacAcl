@@ -1,7 +1,6 @@
 <?php
-	$destination = serialize($this->destination);
 	$form = $this->form;
-	$form->setAttribute('action', $this->url('acl/user/authenticate', array('destination', $destination)));
+	$form->setAttribute('action', $this->url('acl/user/authenticate'));
 	$form->setAttribute('class', 'form-horizontal');
 
 	foreach($form->getElements() as $element) {
@@ -43,30 +42,43 @@
 </div>
 
 <div class="row">
-	<?php echo $this->form()->openTag($form); ?>
 
-	<div class="form-group">
-		<?php echo $this->formLabel($form->get('identity')); ?>
-		<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
-			<?php echo $this->formInput($form->get('identity')); ?>
-		</div>
+	<div class="col-md-1">
+		<span class="glyphicon glyphicon-log-in" style="text-align:center; font-size:100px;"></span>
 	</div>
 
-	<div class="form-group">
-		<?php echo $this->formLabel($form->get('credential')); ?>
-		<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
-			<?php echo $this->formInput($form->get('credential')); ?>
-		</div>
-	</div>
+	<div class="col-md-11">
+		<?php echo $this->form()->openTag($form); ?>
 
-	<div class="form-group">
-		<div class="<?php echo $form->get('identity')->getLabelAttributes()['class']; ?>">&nbsp;</div>
-		<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
-			<?php echo $this->formSubmit($form->get('submit')); ?>
+		<!-- IDENTITY INPUT  -->
+		<div class="form-group">
+			<?php echo $this->formLabel($form->get('identity')); ?>
+			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+				<?php echo $this->formInput($form->get('identity')); ?>
+			</div>
 		</div>
-	</div>
 
-	<?php echo $this->form()->closeTag(); ?>
+		<!--  CREDENTIAL INPUT -->
+		<div class="form-group">
+			<?php echo $this->formLabel($form->get('credential')); ?>
+			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+				<?php echo $this->formInput($form->get('credential')); ?>
+			</div>
+		</div>
+
+		<!--  SUBMIT BUTTON -->
+		<div class="form-group">
+			<div class="<?php
+				$elements = array_values($form->getElements());
+				$firstElement = $elements[0];
+				echo $firstElement->getLabelAttributes()['class']; ?>">&nbsp;</div>
+			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
+				<?php echo $this->formSubmit($form->get('submit')); ?>
+			</div>
+		</div>
+
+		<?php echo $this->form()->closeTag(); ?>
+	</div>
 </div>
 
 <script type="text/javascript">

@@ -69,6 +69,26 @@ return array(
 								),
 							),
 						),
+						'edit' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/edit',
+								'defaults' => array(
+									'action' => 'edit',
+									$aclDqlKey => null,
+								),
+							),
+						),
+						'save' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/save',
+								'defaults' => array(
+									'action' => 'save',
+									$aclDqlKey => null,
+								),
+							),
+						),
 					),
 				),
 

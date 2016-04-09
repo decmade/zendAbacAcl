@@ -11,6 +11,7 @@ return array(
 		'Acl\Wrapper\Attribute' => 'Acl\Model\Wrapper\AttributeWrapper',
 		'Acl\Wrapper\Session' => 'Acl\Model\Wrapper\SessionWrapper',
 		'Acl\Form\UserLogin\InputFilter' => 'Acl\Model\Form\UserLoginFormInputFilter',
+		'Acl\Form\UserProfile\InputFilter' => 'Acl\Model\Form\UserProfileFormInputFilter',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -136,6 +137,15 @@ return array(
 			$inputFilter = $sm->get('Acl\Form\UserLogin\InputFilter');
 
 			$form = new \Acl\Model\Form\UserLoginForm();
+			$form->setInputFilter($inputFilter);
+
+			return $form;
+		},
+		'Acl\Form\UserProfile' => function($sm) {
+
+			$inputFilter = $sm->get('Acl\Form\UserProfile\InputFilter');
+
+			$form = new \Acl\Model\Form\UserProfileForm();
 			$form->setInputFilter($inputFilter);
 
 			return $form;

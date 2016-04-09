@@ -33,12 +33,7 @@
 			array(
 				'label' => 'Profile',
 				'icon' => 'glyphicon glyphicon-user',
-				'url' => $this->url('acl'),
-			),
-			array(
-				'label' => 'Home',
-				'icon' => 'glyphicon glyphicon-home',
-				'url' => $this->url('home'),
+				'url' => $this->url('acl/user/edit'),
 			),
 			array(), // an empty array creates a divider
 			array(
@@ -61,7 +56,7 @@
 	<a href="<?php echo $dropdownActions[0]['url']; ?>" class="<?php echo implode(' ', $btnClasses); ?>" style="min-width:50px;">
 		<span class="<?php echo $dropdownActions[0]['icon']; ?>"></span>
 		&nbsp;
-		<span style="<?php echo implode('; ', $userStyles); ?>"><?php echo $user->getIdentity(); ?></span>
+		<span style="<?php if (isset($userStyles)) echo implode('; ', $userStyles); ?>"><?php echo $user->getIdentity(); ?></span>
 	</a>
 
 	<!-- DROWPDOWN BUTTON with caret symbol on it -->

@@ -26,7 +26,6 @@
 
     </head>
     <body>
-    	<?php echo $this->flashMessages; ?>
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -51,6 +50,8 @@
             </div>
         </nav>
         <div class="container">
+        	<!--  add flash messages for user feedback -->
+        	<?php echo $this->flashMessages; ?>
             <?php echo $this->content; ?>
             <hr>
             <footer>
