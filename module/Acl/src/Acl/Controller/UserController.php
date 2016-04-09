@@ -107,7 +107,7 @@ class UserController extends AbstractEntityController
 
 	public function indexAction()
 	{
-		return array();
+		return $this->redirect()->toRoute('acl/user/edit');
 	}
 
 	/**
@@ -129,7 +129,7 @@ class UserController extends AbstractEntityController
 	}
 
 	/**
-	 * authenticate user, process login attempt
+	 * authenticate user/ process login form
 	 */
 	public function authenticateAction()
 	{
@@ -258,11 +258,11 @@ class UserController extends AbstractEntityController
 	{
 		return array(
 			array(
-				'name' => 'Zend\Form\Form ($loginForm)',
+				'name' => 'Zend\Form\Form (Login Form)',
 				'object' => $this->loginForm,
 			),
 			array(
-				'name' => 'Zend\Form\Form ($profileForm)',
+				'name' => 'Zend\Form\Form (Profile Form)',
 				'object' => $this->profileForm,
 			),
 			array(

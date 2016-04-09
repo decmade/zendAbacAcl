@@ -13,6 +13,8 @@ class DoctrineSessionStorage implements StorageInterface
 {
 	use DependentObjectTrait;
 
+	const SESSION_ENTITY_CLASS = 'Acl\Entity\Session';
+
 	/**
 	 *
 	 * @var EntityManager
@@ -300,7 +302,7 @@ class DoctrineSessionStorage implements StorageInterface
 		$this->checkDependencies();
 
 		$em = $this->entityManager;
-		return $em->getRepository('Acl\Entity\Session')->find($id);
+		return $em->getRepository(self::SESSION_ENTITY_CLASS)->find($id);
 	}
 
 	/**
@@ -388,7 +390,7 @@ class DoctrineSessionStorage implements StorageInterface
 				'object' => $this->container,
 			),
 			array(
-				'name' => 'Acl\Entity\Session',
+				'name' => self::SESSION_ENTITY_CLASS,
 				'object' => $this->sessionPrototype,
 			)
 		);

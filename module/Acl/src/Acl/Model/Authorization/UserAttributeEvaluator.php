@@ -21,6 +21,8 @@ class UserAttributeEvaluator
 	use DependentObjectTrait;
 	use StandardInputFiltersTrait;
 
+	const ATTRIBUTE_ENTITY_CLASS = 'Acl\Entity\Attribute';
+
 	/**
 	 *
 	 * @var EnitityManager
@@ -247,7 +249,8 @@ class UserAttributeEvaluator
 			/*
 			 * build the dql expression to pass to the entity manager
 			 */
-			$dql = sprintf("SELECT a FROM Acl\Entity\Attribute a JOIN a.user u WHERE u.status = %s AND u.id = %s AND ( %s )",
+			$dql = sprintf("SELECT a FROM %s a JOIN a.user u WHERE u.status = %s AND u.id = %s AND ( %s )",
+					self::ATTRIBUTE_ENTITY_CLASS,
 					User::STATUS_ACTIVE,
 					$userId,
 					$clause

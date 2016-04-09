@@ -13,3 +13,44 @@
 	 echo $flash->render('warning', array('alert', 'alert-dismissible', 'alert-warning'));
 	 echo $flash->render('success', array('alert', 'alert-dismissible', 'alert-success'));
 ?>
+<script type="text/javascript">
+	/*
+	 	alert timing settings a encapsulated in an object
+	 	so that the values can be passed by
+	 	reference since JS cannot pass value by reference
+ 	*/
+	var alertSettings = {
+		'delayTime': 5000,
+		'fadeTime': 1000,
+		'removeTime': 500,
+		'incrementDelayTime' : function(increment) {
+			/*
+				increment delay time by time passed
+				or use the current fadeTime as a default
+				if none is given
+			*/
+			if (increment) {
+				this.delayTime += increment;
+			} else {
+				this.delayTime += this.fadeTime;
+			}
+			return this.delayTime;
+		},
+	};
+
+	$(document).ready(function(){
+		/*
+			auto remove notifications after [alertSettings.delayTime] milliseconds
+			and stagger the timing of subsequent
+			animations
+		*/
+		$('.alert').each(function() {
+			$(this)
+				.delay(alertSettings.incrementDelayTime())
+				.fadeOut(alertSettings.fadeTime)
+				.slideUp(alertSettings.removeTime);
+		});
+
+	});
+
+</script>

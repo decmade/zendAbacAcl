@@ -5,12 +5,14 @@ use Zend\Authentication\Adapter\AdapterInterface;
 use Doctrine\ORM\EntityManager;
 use Acl\Model\DependentObjectTrait;
 use Acl\Model\StandardInputFiltersTrait;
+use Acl\Entity\User;
 
 class DoctrineAuthenticationAdapter implements AdapterInterface
 {
 	use DependentObjectTrait;
 	use StandardInputFiltersTrait;
 
+	const USER_ENTITY_CLASS = 'Acl\Entity\User';
 	/**
 	 *
 	 * @var string
@@ -236,9 +238,9 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				/*
 				 * find active user with this identity
 				 */
-				$users = $em->getRepository('Acl\Entity\User')->findBy(array(
+				$users = $em->getRepository(self::USER_ENTITY_CLASS)->findBy(array(
 					'identity' => $identity,
-					'status' => 1,
+					'status' => User::STATUS_ACTIVE,
 					'removed' => null,
 				));
 
@@ -272,9 +274,9 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				/*
 				 * find active user with this identity
 				 */
-				$users = $em->getRepository('Acl\Entity\User')->findBy(array(
+				$users = $em->getRepository(self::USER_ENTITY_CLASS)->findBy(array(
 					'identity' => $identity,
-					'status' => 1,
+					'status' => User::STATUS_ACTIVE,
 					'removed' => null,
 				));
 

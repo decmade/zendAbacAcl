@@ -64,7 +64,7 @@ class FlashMessengerListener implements ListenerAggregateInterface
 		$view = $this->getViewModel();
 		$view
 			->setTemplate($templateName)
-			->setCaptureTo('flashMessages');
+			->setCaptureTo('aclMessages');
 
 		$currentLayout->addChild($view);
 	}

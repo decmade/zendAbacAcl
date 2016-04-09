@@ -17,6 +17,7 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	use DependentObjectTrait;
 
 	const ACCESS_DQL_PARAM_NAME = 'accessDqlConfig';
+	const ROUTE_FORWARDING_SESSION_KEY = 'destination';
 	const UNAUTHENTICATED_CONTROLLER = 'Acl\Controller\User';
 	const UNAUTHENTICATED_ACTION = 'login';
 	const UNAUTHORIZED_CONTROLLER = 'Application\Controller\Index';
@@ -280,7 +281,8 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 		$this->checkDependencies();
 
 		$routeForwarder = $this->routeForwardingContainer;
-		$routeForwarder->destination = $routeMatch;
+		$destinationKey = self::ROUTE_FORWARDING_SESSION_KEY;
+		$routeForwarder->$destinationKey = $routeMatch;
 
 		$newMatch = clone $routeMatch;
 		$newMatch
@@ -356,7 +358,7 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 		$controller = $routeMatch->getParam('controller');
 
 		if ($controller != self::UNAUTHENTICATED_CONTROLLER) {
-			$routeForwardingContainer->offsetUnset('destination');
+			$routeForwardingContainer->offsetUnset(self::ROUTE_FORWARDING_SESSION_KEY);
 		}
 	}
 }
