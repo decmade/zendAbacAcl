@@ -39,7 +39,17 @@ return array(
 					),
 					'may_terminate' => true,
 					'child_routes' => array(
-						'login' => array(
+						'deny' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/deny',
+								'defaults' => array(
+									'action' => 'deny',
+									$aclDqlKey => null,
+								),
+							),
+						),
+							'login' => array(
 							'type' => 'segment',
 							'options' => array(
 								'route' => '/login',

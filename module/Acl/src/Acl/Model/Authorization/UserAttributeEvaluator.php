@@ -5,6 +5,7 @@ use Acl\Model\DependentObjectTrait;
 use Doctrine\ORM\EntityManager;
 use Acl\Model\StandardInputFiltersTrait;
 use Acl\Entity\User;
+use Acl\Entity\Attribute;
 
 /**
  * This class validates that the attributes of the user passed to
@@ -20,8 +21,6 @@ class UserAttributeEvaluator
 {
 	use DependentObjectTrait;
 	use StandardInputFiltersTrait;
-
-	const ATTRIBUTE_ENTITY_CLASS = 'Acl\Entity\Attribute';
 
 	/**
 	 *
@@ -249,8 +248,8 @@ class UserAttributeEvaluator
 			/*
 			 * build the dql expression to pass to the entity manager
 			 */
-			$dql = sprintf("SELECT a FROM %s a JOIN a.user u WHERE u.status = %s AND u.id = %s AND ( %s )",
-					self::ATTRIBUTE_ENTITY_CLASS,
+			$dql = sprintf("SELECT a FROM %s a JOIN a.user u WHERE u.status = %s AND u.id = %s AND a.removed is null AND ( %s )",
+					Attribute::getEntityClass(),
 					User::STATUS_ACTIVE,
 					$userId,
 					$clause

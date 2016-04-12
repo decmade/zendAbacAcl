@@ -12,7 +12,6 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 	use DependentObjectTrait;
 	use StandardInputFiltersTrait;
 
-	const USER_ENTITY_CLASS = 'Acl\Entity\User';
 	/**
 	 *
 	 * @var string
@@ -238,7 +237,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				/*
 				 * find active user with this identity
 				 */
-				$users = $em->getRepository(self::USER_ENTITY_CLASS)->findBy(array(
+				$users = $em->getRepository(User::getEntityClass())->findBy(array(
 					'identity' => $identity,
 					'status' => User::STATUS_ACTIVE,
 					'removed' => null,
@@ -274,7 +273,7 @@ class DoctrineAuthenticationAdapter implements AdapterInterface
 				/*
 				 * find active user with this identity
 				 */
-				$users = $em->getRepository(self::USER_ENTITY_CLASS)->findBy(array(
+				$users = $em->getRepository(User::getEntityClass())->findBy(array(
 					'identity' => $identity,
 					'status' => User::STATUS_ACTIVE,
 					'removed' => null,

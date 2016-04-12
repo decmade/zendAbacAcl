@@ -71,7 +71,7 @@ return array(
 
 			return $evaluator;
 		},
-		'Acl\Listener\UserAttributeEvaluatorListener' => function($sm) {
+		'Acl\Authorization\UserAttributeEvaluatorListener' => function($sm) {
 			$evaluator = $sm->get('Acl\Authorization\UserAttributeEvaluator');
 			$authService = $sm->get('Acl\Authentication\Service');
 			$routeForwardingContainer = $sm->get('Acl\Authentication\Storage\RouteForwarding');
@@ -85,7 +85,7 @@ return array(
 
 			return $listener;
 		},
-		'Acl\Listener\CurrentUserListener' => function($sm) {
+		'Acl\View\CurrentUserListener' => function($sm) {
 			$view = $sm->get('Acl\DefaultViewModel');
 
 			$listener = new \Acl\Model\View\CurrentUserListener();
@@ -94,7 +94,7 @@ return array(
 
 			return $listener;
 		},
-		'Acl\Listener\FlashMessengerListener' => function($sm) {
+		'Acl\View\FlashMessengerListener' => function($sm) {
 			$view = $sm->get('Acl\DefaultViewModel');
 
 			$listener = new \Acl\Model\View\FlashMessengerListener();

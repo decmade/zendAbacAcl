@@ -7,11 +7,10 @@ use Zend\Authentication\Result;
 use Zend\Authentication\AuthenticationService;
 use Acl\Model\Authentication\DoctrineAuthenticationAdapter;
 use Zend\Session\Container;
+use Acl\Entity\User;
 
 class UserController extends AbstractEntityController
 {
-	const USER_REPOSITORY_CLASS = 'Acl\Entity\User';
-
 	/**
 	 *
 	 * @var Form
@@ -111,6 +110,14 @@ class UserController extends AbstractEntityController
 	}
 
 	/**
+	 * Access Denied page
+	 */
+	public function denyAction()
+	{
+		return array();
+	}
+
+	/**
 	 * present login form to unauthenticated user
 	 */
 	public function loginAction()
@@ -194,7 +201,7 @@ class UserController extends AbstractEntityController
 		 * queue up a flash message for user feedback
 		 */
 		$user = $this->getCurrentUser();
-		$message = sprintf("User %s Has Logged Out", $user->getIdentity());
+		$message = sprintf("User %s Has Signed Out", $user->getIdentity());
 		$this->queueMessage($message, 'info');
 
 		$authService->clearIdentity();
@@ -212,9 +219,19 @@ class UserController extends AbstractEntityController
 		 */
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-		return array(
-			'form' => $this->profileForm,
-		);
+		$authService = $this->authenticationService;
+
+		/*
+		 * if user is not authenticated, send to
+		 * the home route
+		 */
+		if ($authService->hasIdentity()) {
+			return array(
+				'form' => $this->profileForm,
+			);
+		} else {
+			return $this->redirect()->toRoute('home');
+		}
 	}
 
 	public function saveAction()
@@ -233,7 +250,6 @@ class UserController extends AbstractEntityController
 
 		if ($form->isValid()) {
 			$data = $form->getData();
-
 
 			if ($data['newCredential-1'] == $data['newCredential-2']) {
 				$user->setCredential($data['newCredential-1']);
@@ -348,7 +364,7 @@ class UserController extends AbstractEntityController
 
 		if ($authService->hasIdentity()) {
 			$id = $authService->getIdentity();
-			$user = $em->getRepository(self::USER_REPOSITORY_CLASS)->find($id);
+			$user = $em->getRepository(User::getEntityClass())->find($id);
 			return $user;
 		} else {
 			return null;

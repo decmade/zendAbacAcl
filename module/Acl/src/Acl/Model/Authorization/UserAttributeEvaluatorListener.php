@@ -20,8 +20,8 @@ class UserAttributeEvaluatorListener implements ListenerAggregateInterface
 	const ROUTE_FORWARDING_SESSION_KEY = 'destination';
 	const UNAUTHENTICATED_CONTROLLER = 'Acl\Controller\User';
 	const UNAUTHENTICATED_ACTION = 'login';
-	const UNAUTHORIZED_CONTROLLER = 'Application\Controller\Index';
-	const UNAUTHORIZED_ACTION = 'index';
+	const UNAUTHORIZED_CONTROLLER = 'Acl\Controller\User';
+	const UNAUTHORIZED_ACTION = 'deny';
 
 	/**
 	 *

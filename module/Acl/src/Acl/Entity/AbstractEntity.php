@@ -91,4 +91,13 @@ abstract class AbstractEntity implements EntityInterface
 		$this->removed = $value;
 		return $this;
 	}
+
+	/**
+	 * return the name of the class for
+	 * use with an EntityManager when making queries
+	 */
+	static public function getEntityClass()
+	{
+		return get_called_class();
+	}
 }

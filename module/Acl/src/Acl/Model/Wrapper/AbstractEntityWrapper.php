@@ -3,10 +3,12 @@ namespace Acl\Model\Wrapper;
 
 use Acl\Entity\EntityInterface;
 use Acl\Model\DependentObjectTrait;
+use Acl\Model\FacadeTrait;
 
 abstract class AbstractEntityWrapper implements EntityWrapperInterface
 {
 	use DependentObjectTrait;
+	use FacadeTrait;
 
 	/**
 	 *
@@ -35,28 +37,12 @@ abstract class AbstractEntityWrapper implements EntityWrapperInterface
 	}
 
 	/**
-	 * this function facilitates the facade over the entity
-	 * by allowing you to call the entity's functions
-	 * from the wrapper's interface
-	 *
-	 * @param string $methodName
-	 * @param array $args
-	 *
-	 * @return unknown
+	 * overloaded reference to the subject class
+	 * for the benefit of the FacadeTrai
 	 */
-	public function __call($methodName, $args)
+	protected function getSubject()
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
-
-		if (method_exists($this->entity, $methodName) )
-		{
-			return call_user_func_array(array($this->entity, $methodName), $args);
-		} else {
-			return null;
-		}
+		return $this->entity;
 	}
 
 	/**

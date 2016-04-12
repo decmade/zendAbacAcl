@@ -37,4 +37,10 @@ interface EntityInterface
 	 * @return $this
 	 */
 	public function setRemoved(DateTime $value);
+
+	/**
+	 * return the name of the class for
+	 * use with an EntityManager when making queries
+	 */
+	static public function getEntityClass();
 }

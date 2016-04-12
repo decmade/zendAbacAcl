@@ -2,26 +2,9 @@
 namespace Acl\Model\Factory;
 
 use Acl\Entity\EntityInterface;
-use Acl\Model\DependentObjectTrait;
 
-abstract Class AbstractEntityFactory implements EntityFactoryInterface
+abstract Class AbstractEntityFactory extends AbstractObjectFactory implements EntityFactoryInterface
 {
-	use DependentObjectTrait;
-
-	/**
-	 *
-	 * @var EntityInterface $prototype
-	 */
-	protected $prototype;
-
-
-	/**
-	 *
-	 * @param array $config
-	 *
-	 * @return EntityInterface
-	 */
-	abstract public function createInstance(array $config);
 
 	/**
 	 *
@@ -33,19 +16,6 @@ abstract Class AbstractEntityFactory implements EntityFactoryInterface
 	{
 		$this->prototype = $entity;
 		return $this;
-	}
-
-	/**
-	 * @return EntityInterface
-	 */
-	public function getPrototypeClone()
-	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
-
-		return clone $this->prototype;
 	}
 
 	/**

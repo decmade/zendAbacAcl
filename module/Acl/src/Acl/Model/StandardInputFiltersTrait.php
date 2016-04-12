@@ -49,4 +49,36 @@ trait StandardInputFiltersTrait
 				return 0;
 		}
 	}
+
+	/**
+	 * takes in a value and filters it to a boolean
+	 * if at all possible otherwise returns false
+	 *
+	 * @param mixed $value
+	 * @return bool
+	 */
+	protected function filterBooleanInput($value) {
+		switch(true) {
+			case (is_bool($value)) :
+				return $value;
+				break;
+			case (is_numeric($value)) :
+				return (bool)$value;
+				break;
+			case (is_string($value)) :
+				switch(strtolower($value)) {
+					case 'true' :
+					case 'yes' :
+					case 't' :
+					case 'y' :
+					case '1' :
+						return true;
+					default :
+						return false;
+				}
+			default :
+				return false;
+		}
+
+	}
 }

@@ -1,6 +1,6 @@
 <?php
 return array(
-	'Acl\Listener\UserAttributeEvaluatorListener',
-	'Acl\Listener\CurrentUserListener',
-	'Acl\Listener\FlashMessengerListener',
+	'Acl\Authorization\UserAttributeEvaluatorListener',
+	'Acl\View\CurrentUserListener',
+	'Acl\View\FlashMessengerListener',
 );

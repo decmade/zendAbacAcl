@@ -20,4 +20,10 @@ interface EntityWrapperInterface
 	 * @return $this
 	 */
 	public function setEntity(EntityInterface $entity);
+
+	/**
+	 * TODO:
+	 * copy()
+	 * getUniqueProprtiesArray()
+	 */
 }

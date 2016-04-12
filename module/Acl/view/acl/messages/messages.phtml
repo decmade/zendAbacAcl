@@ -2,9 +2,9 @@
 	 $flash = $this->flashMessenger();
  $flash->setMessageOpenFormat('<div%s>
      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-         &times;
+		<span class="glyphicon glyphicon-remove"></span>
      </button>
-     <ul><li>')
+     <ul class="alertMessage"><li>')
      ->setMessageSeparatorString('</li><li>')
      ->setMessageCloseString('</li></ul></div>');
 
@@ -49,6 +49,20 @@
 				.delay(alertSettings.incrementDelayTime())
 				.fadeOut(alertSettings.fadeTime)
 				.slideUp(alertSettings.removeTime);
+		});
+
+		/*
+			remove default bullet styling on alerts
+		*/
+		$('ul.alertMessage').css('list-style-type', 'none');
+
+		/*
+			make the bullet for each listed alert
+			a glyphicon-asterisk
+		*/
+		$('ul.alertMessage li').each(function() {
+			var content = $(this).html();
+			$(this).html('<span class="glyphicon glyphicon-asterisk"></span>&nbsp;<strong>' + content + '</strong>');
 		});
 
 	});
