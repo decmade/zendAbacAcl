@@ -5,6 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="acl_attribute")
  *
  * @author John W. Brown, Jr. <john.w.brown.jr@gmail.com>
  *

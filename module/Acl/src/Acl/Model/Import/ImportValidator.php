@@ -109,7 +109,7 @@ class ImportValidator implements ImportValidatorInterface
 							$this->messages[] = sprintf("missing column [%s] @ row %s", $wrapper->getName(), $rowCounter);
 						}
 						break;
-					case ( !$this->rowDataIsValidForColumnName($row, $wrapper)) :
+					case ( !$this->rowDataIsValidForColumn($row, $wrapper)) :
 						foreach($wrapper->getValidator()->getMessages() as $message) {
 							$this->messages[] = sprintf("%s @ row %s", $message, $rowCounter);
 						}
@@ -142,7 +142,7 @@ class ImportValidator implements ImportValidatorInterface
 	 * @param array $row
 	 * @param ColumnDefinitionWrapper $definition
 	 */
-	private function rowDataIsValidForColumnName(array $row, ColumnDefinitionWrapper $definition)
+	private function rowDataIsValidForColumn(array $row, ColumnDefinitionWrapper $definition)
 	{
 		$value = $row[$definition->getName()];
 

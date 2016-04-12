@@ -6,6 +6,7 @@ use \DateTime;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="acl_session")
  *
  * @author John W. Brown, Jr. <john.w.brown.jr@gmail.com>
  *

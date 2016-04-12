@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
+ * @ORM\Table(name="acl_user")
  *
  * @author John W. Brown, Jr. <john.w.brown.jr@gmail.com>
  *

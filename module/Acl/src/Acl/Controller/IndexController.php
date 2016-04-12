@@ -37,7 +37,9 @@ class IndexController extends AbstractActionController
 
     public function indexAction()
     {
+//     	$this->testUserCreation();
     	return array();
+
     }
 
     public function loginAction() {

@@ -256,7 +256,7 @@ class UserController extends AbstractEntityController
 				$em->flush();
 				$this->queueMessage(sprintf("User %s's Password Has Been Updated", $user->getIdentity()), 'success');
 			} else {
-				$this->queueMessage(sprintf("New Passwords and Confirm Password Fields Do Not Match"),'error');
+				$this->queueMessage(sprintf("New Password and Confirm Password Fields Do Not Match"),'error');
 				$this->queueMessage(sprintf("User %s's Password Was Not Updated.", $user->getIdentity()), 'info');
 			}
 		} else {

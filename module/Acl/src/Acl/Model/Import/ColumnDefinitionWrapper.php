@@ -56,17 +56,20 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 		}
 	}
 
-/**
+	/*
+	 * 	BEGIN: ColumnDefinitionInterface Methods
+	 */
+
+	/**
 	 * @return string
 	 */
 	public function getName()
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
-
-		return $this->definition->getName();
+		if ($this->hasDependencies()) {
+			return $this->definition->getName();
+		} else {
+			return '';
+		}
 	}
 
 	/**
@@ -77,12 +80,10 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 	 */
 	public function setName($value)
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
+		if ($this->hasDependencies()) {
+			$this->definition->setName($value);
+		}
 
-		$this->definition->setName($value);
 		return $this;
 	}
 
@@ -91,12 +92,12 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 	 */
 	public function getValidator()
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
+		if ($this->hasDependencies()) {
+			return $this->definition->getValidator();
+		} else {
+			return null;
+		}
 
-		return $this->definition->getValidator();
 	}
 
 	/**
@@ -107,12 +108,10 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 	 */
 	public function setValidator(ValidatorInterface $validator)
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
+		if ($this->hasDependencies()) {
+			$this->definition->setValidator($validator);
+		}
 
-		$this->definition->setValidator($validator);
 		return $this;
 	}
 
@@ -121,12 +120,12 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 	 */
 	public function getIsRequired()
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
+		if ($this->hasDependencies()) {
+			return $this->definition->getIsRequired();
+		} else {
+			return false;
+		}
 
-		return $this->definition->getIsRequired();
 	}
 
 	/**
@@ -137,12 +136,10 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 	 */
 	public function setIsRequired($value)
 	{
-		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
+		if ($this->hasDependencies()) {
+			$this->definition->setIsRequired($value);
+		}
 
-		$this->definition->setIsRequired($value);
 		return $this;
 	}
 

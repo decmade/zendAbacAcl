@@ -26,6 +26,32 @@ trait DependentObjectTrait
 		return array();
 	}
 
+
+	/**
+	 * checks for all dependencies defined in the array returned
+	 * by getDependenciesConfig() and returns true if they are
+	 * all present in the current class
+	 *
+	 * @throws Exception
+	 */
+	protected function hasDependencies($getConfigMethodName = 'getDependenciesConfig')
+	{
+		$dependencies = $this->$getConfigMethodName();
+
+		/*
+		 * loop through the dependencies and check to see
+		 * if each object is present
+		 */
+		foreach( $dependencies as $dependency) {
+			$object = ( isset($dependency['object']) ) ? $dependency['object'] : false;
+			$objectName = ( isset($dependency['name']) ) ? $dependency['name'] : '[undefined]';
+
+			if (!$object || $object == null) {
+				return false;
+			}
+		}
+	}
+
 	/**
 	 * checks for all dependencies defined in the array returned
 	 * by getDependenciesConfig() and throws an exception if
