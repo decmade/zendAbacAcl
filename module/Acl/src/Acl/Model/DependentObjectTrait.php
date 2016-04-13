@@ -50,6 +50,8 @@ trait DependentObjectTrait
 				return false;
 			}
 		}
+
+		return true;
 	}
 
 	/**

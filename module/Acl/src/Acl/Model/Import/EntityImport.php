@@ -9,7 +9,7 @@ use Acl\Entity\EntityInterface;
 use \DateTime;
 use Acl\Model\Wrapper\EntityWrapperInterface;
 
-abstract class AbstractEntityImport implements EntityImportInterface
+class EntityImport implements EntityImportInterface
 {
 	use StandardInputFiltersTrait;
 	use DependentObjectTrait;
@@ -172,6 +172,10 @@ abstract class AbstractEntityImport implements EntityImportInterface
 				break;
 		}
 
+		/*
+		 * loop through the data to either insert or update
+		 * each user according to the data currently in the table
+		 */
 		foreach($data as $row) {
 			$importedEntity = $this->hydrateEntity($row);
 
@@ -183,10 +187,7 @@ abstract class AbstractEntityImport implements EntityImportInterface
 
 
 			if (count($existingEntities) == 0) {
-				$entity
-					->setAdded(new DateTime());
-
-				$em->persist($entity);
+				$em->persist($importedEntity);
 				$counts['added']++;
 			} else {
 				foreach($existingEntities as $original) {
@@ -194,9 +195,8 @@ abstract class AbstractEntityImport implements EntityImportInterface
 						->setEntity($original)
 						->copy($importedEntity);
 
-					$counts['updated']--;
+					$counts['updated']++;
 				}
-
 			}
 		}
 
@@ -278,7 +278,7 @@ abstract class AbstractEntityImport implements EntityImportInterface
 	 *
 	 * @return EntityInterface
 	 */
-	private function retrieveEntitiesByCriteria(array $critera)
+	private function retrieveEntitiesByCriteria(array $criteria)
 	{
 		/*
 		 * run dependency check

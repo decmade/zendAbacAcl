@@ -5,11 +5,6 @@ use Acl\Entity\EntityInterface;
 
 class UserWrapper extends AbstractEntityWrapper
 {
-	/**
-	 *
-	 * @var unknown
-	 */
-	private $user;
 
 	/**
 	 *
@@ -51,10 +46,18 @@ class UserWrapper extends AbstractEntityWrapper
 	public function copy(EntityInterface $template)
 	{
 		if ($this->hasDependencies()) {
-			$this->entity
-				->setAdded($template->getAdded())
-				->setStatus($template->getStatus())
-				->setRemoved($template->getRemoved());
+			$entity = $this->entity;
+
+			$entity
+				->setIdentity($template->getIdentity())
+				->setStatus($template->getStatus());
+
+			/*
+			 * if the subject has been removed but the copy is not removed
+			 */
+			if ($entity->getRemoved() != null && $template->getRemoved() == null ) {
+				$entity->clearRemoved();
+			}
 		}
 
 		return $this;

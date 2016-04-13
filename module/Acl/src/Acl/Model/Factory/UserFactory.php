@@ -12,22 +12,28 @@ class UserFactory extends AbstractEntityFactory
 	{
 		$user = $this->getPrototypeClone();
 
-		foreach($config as $param=>$value) {
+		foreach($config as $param => $value) {
 			$param = strtolower($param);
 
 			switch($param) {
 				case 'identity' :
 					$user->setIdentity($value);
 					break;
+				case 'credential' :
+					$user->setCredential($value);
+					break;
 				case 'status' :
 					$user->setStatus($value);
 					break;
-				case 'attributes' :
-					// stub
+				case 'removed' :
+					if (!empty($value)) {
+						$user->setRemoved();
+					}
+
 					break;
 			}
-
-			return $user;
 		}
+
+		return $user;
 	}
 }

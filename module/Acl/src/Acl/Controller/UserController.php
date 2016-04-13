@@ -210,7 +210,9 @@ class UserController extends AbstractEntityController
 	}
 
 	/**
-	 * present form that is user profile
+	 * present form as the user's profile
+	 *
+	 * @return array
 	 */
 	public function editAction()
 	{
@@ -234,6 +236,11 @@ class UserController extends AbstractEntityController
 		}
 	}
 
+	/**
+	 * save the user data to the database
+	 *
+	 * @return array
+	 */
 	public function saveAction()
 	{
 		/*
@@ -265,6 +272,40 @@ class UserController extends AbstractEntityController
 		}
 
 		$this->redirect()->toRoute('acl/user/edit');
+	}
+
+	public function importAction()
+	{
+		$testData = array(
+			array(
+				'identity' => 'dev',
+				'credential' => 'testPass',
+			),
+			array(
+				'identity' => 'e20019222',
+				'credential' => 'password',
+			),
+			array(
+				'identity' => 'e20057025',
+				'credential' => 'password',
+				'status' => 0,
+			),
+			array(
+				'identity' => 'e19912221',
+				'credential' => 'password',
+			),
+			array(
+				'identity' => 'e19790808',
+				'credential' => 'password',
+			),
+		);
+
+		$options = array(
+			'isDefinitive' => 'true',
+		);
+
+		$userImport = $this->getServiceLocator()->get('Acl\Import\User');
+		$userImport->import($testData, $options);
 	}
 
 	/**

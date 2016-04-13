@@ -141,6 +141,19 @@ return array(
 			$namespace = 'Zend\Acl\RouteForwarding';
 			return new \Zend\Session\Container($namespace);
 		},
+		'Acl\Import\User' => function($sm) {
+			$manager = $sm->get('Acl\Entity\Manager');
+			$factory = $sm->get('Acl\Factory\User');
+			$wrapper = $sm->get('Acl\Wrapper\User');
+
+			$import = new \Acl\Model\Import\EntityImport();
+			$import
+				->setManager($manager)
+				->setFactory($factory)
+				->setWrapper($wrapper);
+
+			return $import;
+		},
 	),
 
 );

@@ -36,7 +36,12 @@ interface EntityInterface
 	 *
 	 * @return $this
 	 */
-	public function setRemoved(DateTime $value);
+	public function setRemoved();
+
+	/**
+	 * clear the removed date
+	 */
+	public function clearRemoved();
 
 	/**
 	 * return the name of the class for

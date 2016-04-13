@@ -82,13 +82,21 @@ abstract class AbstractEntity implements EntityInterface
 	 * normal queries of current entities should always exclude those with
 	 * removed dates
 	 *
-	 * @param DateTime $value
 	 *
 	 * @return $this
 	 */
-	public function setRemoved(DateTime $value)
+	public function setRemoved()
 	{
-		$this->removed = $value;
+		$this->removed = new DateTime();
+		return $this;
+	}
+
+	/**
+	 * clear the removed date
+	 */
+	public function clearRemoved()
+	{
+		$this->removed = null;
 		return $this;
 	}
 
