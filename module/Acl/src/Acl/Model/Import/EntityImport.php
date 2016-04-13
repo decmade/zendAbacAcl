@@ -6,6 +6,8 @@ use Acl\Model\Factory\EntityFactoryInterface;
 use Acl\Model\StandardInputFiltersTrait;
 use Acl\Model\DependentObjectTrait;
 use Acl\Entity\EntityInterface;
+use \DateTime;
+use Acl\Model\Wrapper\EntityWrapperInterface;
 
 abstract class AbstractEntityImport implements EntityImportInterface
 {
@@ -26,6 +28,12 @@ abstract class AbstractEntityImport implements EntityImportInterface
 
 	/**
 	 *
+	 * @var EntityWrapperInterface
+	 */
+	private $wrapper;
+
+	/**
+	 *
 	 * @var array
 	 */
 	private $options;
@@ -39,23 +47,6 @@ abstract class AbstractEntityImport implements EntityImportInterface
 	private $entityClassName;
 
 	/**
-	 * merge the data in the associative array with the entity
-	 * in storage
-	 *
-	 * return an array of metrics
-	 * 	->totalRecords
-	 *  ->addedRecords
-	 *  ->removedRecords
-	 *  ->updatedRecords
-	 *
-	 *
-	 * @param array $data
-	 *
-	 * @return array
-	 */
-	abstract public function import();
-
-	/**
 	 * @return self
 	 */
 	public function __construct()
@@ -67,7 +58,7 @@ abstract class AbstractEntityImport implements EntityImportInterface
 		 * for the import
 		 */
 		$this->options = array(
-			'isDefinitive' => true,
+			'isDefinitive' => 'flase', // means that the data being imported should be the only active data
 		);
 	}
 
@@ -97,6 +88,18 @@ abstract class AbstractEntityImport implements EntityImportInterface
 
 	/**
 	 *
+	 * @param EntityWrapperInterface $wrapper
+	 *
+	 * @return self
+	 */
+	public function setWrapper(EntityWrapperInterface $wrapper)
+	{
+		$this->wrapper = $wrapper;
+		return $this;
+	}
+
+	/**
+	 *
 	 * @param string $name
 	 * @param string $value
 	 *
@@ -105,6 +108,7 @@ abstract class AbstractEntityImport implements EntityImportInterface
 	public function setOption($name, $value)
 	{
 		if ($this->hasOption($name)) {
+			$value = strtolower($value);
 			$this->options[$name] = $this->filterStringInput($value);
 		}
 
@@ -124,7 +128,84 @@ abstract class AbstractEntityImport implements EntityImportInterface
 		}
 	}
 
+	/**
+	 * merge the data in the associative array with the entity
+	 * in storage
+	 *
+	 * return an array of metrics
+	 * 	->totalRecords
+	 *  ->addedRecords
+	 *  ->updatedRecords
+	 *
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	public function import(array $data, array $options = array())
+	{
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
 
+		$em = $this->manager;
+		$factory = $this->factory;
+		$wrapper = $this->wrapper;
+		$counts = array(
+			'added' => 0,
+			'updated' => 0,
+		);
+
+		/*
+		 * process options array
+		 */
+		$this->processOptionsArray($options);
+
+		/*
+		 * handle any options that address items that occur prior
+		 * to the import
+		 */
+		switch(true) {
+			case ($this->getOption('isDefinitive') == 'true') :
+				$this->removeExistingEntities();
+				break;
+		}
+
+		foreach($data as $row) {
+			$importedEntity = $this->hydrateEntity($row);
+
+			$existingEntities = $this->retrieveEntitiesByCriteria(
+				$wrapper
+					->setEntity($importedEntity)
+					->getUniquePropertiesArray()
+			);
+
+
+			if (count($existingEntities) == 0) {
+				$entity
+					->setAdded(new DateTime());
+
+				$em->persist($entity);
+				$counts['added']++;
+			} else {
+				foreach($existingEntities as $original) {
+					$wrapper
+						->setEntity($original)
+						->copy($importedEntity);
+
+					$counts['updated']--;
+				}
+
+			}
+		}
+
+		$em->flush();
+
+		$counts['total'] = $counts['added'] + $counts['updated'];
+		return $counts;
+
+	}
 
 
 	/**
@@ -210,6 +291,26 @@ abstract class AbstractEntityImport implements EntityImportInterface
 	}
 
 	/**
+	 * sets the Removed date on all entities, marking them to be ignored going forward
+	 */
+	private function removeExistingEntities()
+	{
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
+
+		$em = $this->manager;
+		$removedTimeStamp = new DateTime();
+		$entities = $em->getRepository($this->getEntityClassName())->findAll();
+
+		foreach($entities as $entity) {
+			$entity->setRemoved($removedTimeStamp);
+		}
+
+		$em->flush();
+	}
+	/**
 	 * @see DependentObjectTrait
 	 *
 	 * @return array
@@ -222,8 +323,12 @@ abstract class AbstractEntityImport implements EntityImportInterface
 				'object' => $this->manager,
 			),
 			array(
-				'name' => 'Acl\Factory\EntityFactoryInterface',
+				'name' => 'Acl\Model\Factory\EntityFactoryInterface',
 				'object' => $this->factory,
+			),
+			array(
+				'name' => 'Acl\Model\Wrapper\EntityWrapperInterface',
+				'object' => $this->wrapper,
 			),
 		);
 	}

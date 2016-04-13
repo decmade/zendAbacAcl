@@ -1,7 +1,7 @@
 <?php
 namespace Acl\Model\Wrapper;
 
-class SessionWrapper extends AbstractEntityWrapper
+class SessionWrapper
 {
 	public function toArray()
 	{

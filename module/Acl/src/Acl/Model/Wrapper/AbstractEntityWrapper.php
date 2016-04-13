@@ -3,12 +3,10 @@ namespace Acl\Model\Wrapper;
 
 use Acl\Entity\EntityInterface;
 use Acl\Model\DependentObjectTrait;
-use Acl\Model\FacadeTrait;
 
 abstract class AbstractEntityWrapper implements EntityWrapperInterface
 {
 	use DependentObjectTrait;
-	use FacadeTrait;
 
 	/**
 	 *
@@ -25,6 +23,30 @@ abstract class AbstractEntityWrapper implements EntityWrapperInterface
 	abstract public function toArray();
 
 	/**
+	 * copy the relevant properties of the entity passed
+	 *
+	 * @param EntityInterface $template
+	 *
+	 * @return self
+	 */
+	abstract public function copy(EntityInterface $template);
+
+	/**
+	 * @return array
+	 */
+	abstract protected function getDependenciesConfig();
+
+	/**
+	 * retrieve the unique properties of the entity as an
+	 * array that can be passed to the EntityManager as criteria
+	 * to find the same instance of the entity in the database
+	 *
+	 *
+	 * @return array
+	 */
+	abstract public function getUniquePropertiesArray();
+
+	/**
 	 *
 	 * @param EntityInterface $entity
 	 *
@@ -37,24 +59,10 @@ abstract class AbstractEntityWrapper implements EntityWrapperInterface
 	}
 
 	/**
-	 * overloaded reference to the subject class
-	 * for the benefit of the FacadeTrai
+	 * get the encapsulated entity
 	 */
-	protected function getSubject()
+	public function getEntity()
 	{
 		return $this->entity;
-	}
-
-	/**
-	 * @return array
-	 */
-	protected function getDependenciesConfig()
-	{
-		return array(
-			array(
-				'name' => 'Acl\Entity\EntityInterface',
-				'object' => $this->entity,
-			),
-		);
 	}
 }

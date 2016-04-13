@@ -1,7 +1,7 @@
 <?php
 namespace Acl\Model\Wrapper;
 
-class AttributeWrapper extends AbstractEntityWrapper
+class AttributeWrapper
 {
 	public function toArray()
 	{

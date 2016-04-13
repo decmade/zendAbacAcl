@@ -8,10 +8,9 @@ return array(
 		'Acl\Entity\Session' => 'Acl\Entity\Session',
 		'Acl\Entity\User' => 'Acl\Entity\User',
 		'Acl\DefaultViewModel' => 'Zend\View\Model\ViewModel',
-		'Acl\Wrapper\Attribute' => 'Acl\Model\Wrapper\AttributeWrapper',
-		'Acl\Wrapper\Session' => 'Acl\Model\Wrapper\SessionWrapper',
 		'Acl\Form\UserLogin\InputFilter' => 'Acl\Model\Form\UserLoginFormInputFilter',
 		'Acl\Form\UserProfile\InputFilter' => 'Acl\Model\Form\UserProfileFormInputFilter',
+		'Acl\Wrapper\User' => 'Acl\Model\Wrapper\UserWrapper',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -119,18 +118,6 @@ return array(
 				->setPrototype($user);
 
 			return $factory;
-		},
-		'Acl\Wrapper\User' => function($sm) {
-			$attributeWrapper = $sm->get('Acl\Wrapper\Attribute');
-			$sessionWrapper = $sm->get('Acl\Wrapper\Session');
-
-			$wrapper = new \Acl\Model\Wrapper\UserWrapper();
-			$wrapper
-				->setAttributeWrapper($attributeWrapper)
-				->setSessionWrapper($sessionWrapper)
-			;
-
-			return $wrapper;
 		},
 		'Acl\Form\UserLogin' => function($sm) {
 
