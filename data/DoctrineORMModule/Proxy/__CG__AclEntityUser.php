@@ -323,12 +323,23 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     /**
      * {@inheritDoc}
      */
-    public function setRemoved(\DateTime $value)
+    public function setRemoved()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setRemoved', array($value));
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setRemoved', array());
 
-        return parent::setRemoved($value);
+        return parent::setRemoved();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function clearRemoved()
+    {
+
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'clearRemoved', array());
+
+        return parent::clearRemoved();
     }
 
 }

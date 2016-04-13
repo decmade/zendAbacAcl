@@ -56,7 +56,7 @@ class UserWrapper extends AbstractEntityWrapper
 			 * if the subject has been removed but the copy is not removed
 			 */
 			if ($entity->getRemoved() != null && $template->getRemoved() == null ) {
-				$entity->clearRemoved();
+				$entity	->clearRemoved();
 			}
 		}
 
