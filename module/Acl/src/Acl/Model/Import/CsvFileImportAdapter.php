@@ -99,7 +99,8 @@ class CsvFileImportAdapter implements ImportAdapterInterface
 					$thisRow = array();
 
 					for ($i = 0; $i < $columnCount; $i++) {
-						$thisRow[$columns[$i]] = $row[$i];
+						$columnName = strtolower($columns[$i]);
+						$thisRow[$columnName] = $row[$i];
 					}
 
 					$output[] = $thisRow;

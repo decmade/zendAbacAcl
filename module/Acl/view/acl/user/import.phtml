@@ -1,9 +1,15 @@
 <?php
-
+	$messages = $this->messages;
+	$counts = $this->counts;
 ?>
 <div class="row">
 	<div class="page-header">
 		<h1>User Import</h1>
 	</div>
 </div>
-
+<pre>
+	<?php
+		echo print_r($messages, true);
+		echo print_r($counts, true);
+	?>
+</pre>

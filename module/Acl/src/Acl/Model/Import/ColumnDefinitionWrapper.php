@@ -2,7 +2,7 @@
 namespace Acl\Model\Import;
 
 use Acl\Model\DependentObjectTrait;
-use Acl\Model\FacadeTrait;
+use Zend\Validator\ValidatorInterface;
 
 /**
  * facade wrapped around a ColumnDefinition
@@ -28,7 +28,7 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 	 */
 	public function setDefinition(ColumnDefinition $definition)
 	{
-		$this->definition = $defintion;
+		$this->definition = $definition;
 		return $this;
 	}
 
@@ -47,17 +47,12 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 		 */
 		$this->checkDependencies();
 
-		$validator = $this->definition->getValidator();
+		return $this->definition->getValidator()->isValid($value);
 
-		if ($validator != null ) {
-			return $validator->isValid($value);
-		} else {
-			return true;
-		}
 	}
 
 	/*
-	 * 	BEGIN: ColumnDefinitionInterface Methods
+	 * 	BEGIN: Facade/ColumnDefinitionInterface Methods
 	 */
 
 	/**
@@ -154,9 +149,6 @@ class ColumnDefinitionWrapper implements ColumnDefinitionInterface
 			array(
 				'name' => 'Acl\Model\Import\ColumnDefinition',
 				'object' => $this->definition,
-			),
-			array(
-
 			),
 		);
 	}

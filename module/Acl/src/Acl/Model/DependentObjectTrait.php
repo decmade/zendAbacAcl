@@ -44,7 +44,7 @@ trait DependentObjectTrait
 		 */
 		foreach( $dependencies as $dependency) {
 			$object = ( isset($dependency['object']) ) ? $dependency['object'] : false;
-			$objectName = ( isset($dependency['name']) ) ? $dependency['name'] : '[undefined]';
+			$objectName = ( isset($dependency['name']) ) ? $dependency['name'] : null;
 
 			if (!$object || $object == null) {
 				return false;
@@ -71,7 +71,7 @@ trait DependentObjectTrait
 		 */
 		foreach( $dependencies as $dependency) {
 			$object = ( isset($dependency['object']) ) ? $dependency['object'] : false;
-			$objectName = ( isset($dependency['name']) ) ? $dependency['name'] : '[undefined]';
+			$objectName = ( isset($dependency['name']) ) ? $dependency['name'] : null;
 
 			if (!$object || $object == null) {
 				/*

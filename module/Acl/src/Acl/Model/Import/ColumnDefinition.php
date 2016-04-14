@@ -49,7 +49,7 @@ class ColumnDefinition implements ColumnDefinitionInterface
 	 */
 	public function setName($value)
 	{
-		$this->name = $this->filterStringInput($value);
+		$this->name = strtolower($this->filterStringInput($value));
 		return $this;
 	}
 

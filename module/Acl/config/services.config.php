@@ -11,7 +11,10 @@ return array(
 		'Acl\Form\UserLogin\InputFilter' => 'Acl\Model\Form\UserLoginFormInputFilter',
 		'Acl\Form\UserProfile\InputFilter' => 'Acl\Model\Form\UserProfileFormInputFilter',
 		'Acl\Wrapper\User' => 'Acl\Model\Wrapper\UserWrapper',
+		'Acl\Wrapper\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinitionWrapper',
 		'Acl\Import\Adapter\CsvFile' => 'Acl\Model\Import\CsvFileImportAdapter',
+		'Acl\Import\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinition',
+		'Acl\Import\Validator\UniqueValue' => 'Acl\Model\Import\UniqueValue',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -120,6 +123,15 @@ return array(
 
 			return $factory;
 		},
+		'Acl\Factory\ColumnDefinition' => function($sm) {
+			$prototype = $sm->get('Acl\Import\ColumnDefinition');
+
+			$factory = new \Acl\Model\Factory\ColumnDefinitionFactory();
+			$factory
+				->setPrototype($prototype);
+
+			return $factory;
+		},
 		'Acl\Form\UserLogin' => function($sm) {
 
 			$inputFilter = $sm->get('Acl\Form\UserLogin\InputFilter');
@@ -142,18 +154,58 @@ return array(
 			$namespace = 'Zend\Acl\RouteForwarding';
 			return new \Zend\Session\Container($namespace);
 		},
+		'Acl\Import\User\Validator' => function($sm) {
+			$wrapper = $sm->get('Acl\Wrapper\ColumnDefinition');
+
+			$validator = new \Acl\Model\Import\ImportValidator();
+			$validator
+				->setColumnDefinitionWrapper($wrapper)
+				->addColumnDefinition($sm->get('Acl\Import\ColumnDefinition\Identity'))
+			;
+
+			return $validator;
+		},
+		'Acl\Import\ColumnDefinition\Identity' => function($sm) {
+			$validator = $sm->get('Acl\Import\ColumDefinition\Identity\ValidatorChain');
+			$factory = $sm->get('Acl\Factory\ColumnDefinition');
+
+			return $factory->createInstance(array(
+				'name' => 'identity',
+				'validator' => $validator,
+				'required' => true,
+			));
+		},
+		'Acl\Import\ColumDefinition\Identity\ValidatorChain' => function($sm) {
+			/*
+			 * using a clone with a cleared cache to make certain that the values are only
+			 * being compared to other values in this data domain
+			 */
+			$uniqueValidator = clone $sm->get('Acl\Import\Validator\UniqueValue');
+			$uniqueValidator->clearCache();
+
+			$chain = new \Zend\Validator\ValidatorChain();
+			$chain
+				->attachByName('NotEmpty', array(), true)
+				->attach($uniqueValidator, true)
+			;
+
+			return $chain;
+		},
 		'Acl\Import\User' => function($sm) {
 			$manager = $sm->get('Acl\Entity\Manager');
 			$factory = $sm->get('Acl\Factory\User');
 			$wrapper = $sm->get('Acl\Wrapper\User');
 			$adapter = $sm->get('Acl\Import\Adapter\CsvFile');
+			$validator = $sm->get('Acl\Import\User\Validator');
 
 			$import = new \Acl\Model\Import\EntityImport();
 			$import
 				->setManager($manager)
 				->setFactory($factory)
 				->setWrapper($wrapper)
-				->setAdapter($adapter);
+				->setAdapter($adapter)
+				->setValidator($validator)
+			;
 
 			return $import;
 		},

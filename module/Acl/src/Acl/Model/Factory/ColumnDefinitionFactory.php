@@ -14,7 +14,7 @@ class ColumnDefinitionFactory extends AbstractObjectFactory
 		$definition = $this->prototype;
 
 		foreach($config as $param => $value) {
-			$param = strtotlower($param);
+			$param = strtolower($param);
 
 			switch($param) {
 				case 'name' :
@@ -24,7 +24,7 @@ class ColumnDefinitionFactory extends AbstractObjectFactory
 					$definition->setValidator($value);
 					break;
 				case 'required' :
-					$definition->setRequired($value);
+					$definition->setIsRequired($value);
 					break;
 			}
 		}

@@ -101,15 +101,15 @@ class ImportValidator implements ImportValidatorInterface
 				 * enclose the defintion in its facade wrapper
 				 * class
 				 */
-				$wrapper->set($definition);
+				$wrapper->setDefinition($definition);
 
 				switch(true) {
-					case ( !$this->columnNameIsAnArrayKey($definition, $row) ) :
+					case ( !array_key_exists($wrapper->getName(), $row) || empty($row[$wrapper->getName()]) ) :
 						if ($wrapper->getIsRequired()) {
 							$this->messages[] = sprintf("missing column [%s] @ row %s", $wrapper->getName(), $rowCounter);
 						}
 						break;
-					case ( !$this->rowDataIsValidForColumn($row, $wrapper)) :
+					case ( !$wrapper->isValid($row[$wrapper->getName()])) :
 						foreach($wrapper->getValidator()->getMessages() as $message) {
 							$this->messages[] = sprintf("%s @ row %s", $message, $rowCounter);
 						}
@@ -118,21 +118,7 @@ class ImportValidator implements ImportValidatorInterface
 			}
 		}
 
-		return (count($messages) == 0);
-	}
-
-	/**
-	 *
-	 * @param ColumnDefinitionInterface $definition
-	 * @param array $row
-	 *
-	 * @return boolean
-	 */
-	private function columnNameIsAnArrayKey(ColumnDefinitionInterface $definition, array $row)
-	{
-		$defColumnName = $definition->getName();
-
-		return array_key_exists($defColumnName, $row);
+		return (count($this->messages) == 0);
 	}
 
 	/**

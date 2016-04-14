@@ -288,7 +288,9 @@ class UserController extends AbstractEntityController
 		);
 
 		$userImport = $this->getServiceLocator()->get('Acl\Import\User');
-		$userImport->import($importFile, $options);
+		return $userImport->import($importFile, $options);
+
+
 	}
 
 	/**

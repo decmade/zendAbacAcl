@@ -40,6 +40,13 @@ class EntityImport implements EntityImportInterface
 
 	/**
 	 *
+	 * @var ImportValidatorInterface
+	 */
+	private $validator;
+
+
+	/**
+	 *
 	 * @var array
 	 */
 	private $options;
@@ -51,6 +58,7 @@ class EntityImport implements EntityImportInterface
 	 * @var string
 	 */
 	private $entityClassName;
+
 
 	/**
 	 * @return self
@@ -118,6 +126,18 @@ class EntityImport implements EntityImportInterface
 
 	/**
 	 *
+	 * @param ImportValidatorInterface $validator
+	 *
+	 * @return self
+	 */
+	public function setValidator(ImportValidatorInterface $validator)
+	{
+		$this->validator = $validator;
+		return $this;
+	}
+
+	/**
+	 *
 	 * @param string $name
 	 * @param string $value
 	 *
@@ -170,10 +190,12 @@ class EntityImport implements EntityImportInterface
 		$em = $this->manager;
 		$factory = $this->factory;
 		$wrapper = $this->wrapper;
+		$validator = $this->validator;
 		$counts = array(
 			'added' => 0,
 			'updated' => 0,
 		);
+		$messages = array();
 
 		/*
 		 * process options array
@@ -181,53 +203,65 @@ class EntityImport implements EntityImportInterface
 		$this->processOptionsArray($options);
 
 		/*
-		 * handle any options that address items that occur prior
-		 * to the import
-		 */
-		switch(true) {
-			case ($this->getOption('isDefinitive') == 'true') :
-				$this->removeExistingEntities();
-				break;
-		}
-
-		/*
 		 * retrieve the data from the source
 		 * through the adapter
 		 */
 		$data = $this->getDataFromAdapter($source);
 
-		/*
-		 * loop through the data to either insert or update
-		 * each user according to the data currently in the table
-		 */
-		foreach($data as $row) {
-			$importedEntity = $this->hydrateEntity($row);
+		if ($validator->isValid($data)) {
 
-			$existingEntities = $this->retrieveEntitiesByCriteria(
-				$wrapper
-					->setEntity($importedEntity)
-					->getUniquePropertiesArray()
-			);
+			/*
+			 * handle any options that address items that occur prior
+			 * to the import
+			 */
+			switch(true) {
+				case ($this->getOption('isDefinitive') == 'true') :
+					$this->removeExistingEntities();
+					break;
+			}
 
+			/*
+			 * loop through the data to either insert or update
+			 * each user according to the data currently in the table
+			 */
+			foreach($data as $row) {
+				$importedEntity = $this->hydrateEntity($row);
 
-			if (count($existingEntities) == 0) {
-				$em->persist($importedEntity);
-				$counts['added']++;
-			} else {
-				foreach($existingEntities as $original) {
+				$existingEntities = $this->retrieveEntitiesByCriteria(
 					$wrapper
-						->setEntity($original)
-						->copy($importedEntity);
+						->setEntity($importedEntity)
+						->getUniquePropertiesArray()
+				);
 
-					$counts['updated']++;
+
+				if (count($existingEntities) == 0) {
+					$em->persist($importedEntity);
+					$counts['added']++;
+				} else {
+					foreach($existingEntities as $original) {
+						$wrapper
+							->setEntity($original)
+							->copy($importedEntity);
+
+						$counts['updated']++;
+					}
 				}
 			}
+
+			$em->flush();
+		} else {
+			$messages = $validator->getMessages();
 		}
 
-		$em->flush();
+
 
 		$counts['total'] = $counts['added'] + $counts['updated'];
-		return $counts;
+
+		return array(
+			'counts' => $counts,
+			'messages' => $messages,
+
+		);
 
 	}
 
@@ -375,6 +409,10 @@ class EntityImport implements EntityImportInterface
 			array(
 				'name' => 'Acl\Model\Import\ImportAdapterInterface',
 				'object' => $this->adapter,
+			),
+			array(
+				'name' => 'Acl\Model\Import\ImportValidatorInterface',
+				'object' => $this->validator,
 			),
 		);
 	}
