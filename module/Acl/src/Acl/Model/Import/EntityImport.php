@@ -34,6 +34,12 @@ class EntityImport implements EntityImportInterface
 
 	/**
 	 *
+	 * @var ImportAdapterInterface
+	 */
+	private $adapter;
+
+	/**
+	 *
 	 * @var array
 	 */
 	private $options;
@@ -100,6 +106,18 @@ class EntityImport implements EntityImportInterface
 
 	/**
 	 *
+	 * @param ImportAdapterInterface $adapter
+	 *
+	 * @return self
+	 */
+	public function setAdapter(ImportAdapterInterface $adapter)
+	{
+		$this->adapter = $adapter;
+		return $this;
+	}
+
+	/**
+	 *
 	 * @param string $name
 	 * @param string $value
 	 *
@@ -142,7 +160,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @return array
 	 */
-	public function import(array $data, array $options = array())
+	public function import($source, array $options = array())
 	{
 		/*
 		 * run dependency check
@@ -171,6 +189,12 @@ class EntityImport implements EntityImportInterface
 				$this->removeExistingEntities();
 				break;
 		}
+
+		/*
+		 * retrieve the data from the source
+		 * through the adapter
+		 */
+		$data = $this->getDataFromAdapter($source);
 
 		/*
 		 * loop through the data to either insert or update
@@ -310,6 +334,24 @@ class EntityImport implements EntityImportInterface
 
 		$em->flush();
 	}
+
+	/**
+	 * retrieve the data from the source
+	 * using the appropriate ImportAdapterInterface
+	 *
+	 * @param mized $source
+	 */
+	private function getDataFromAdapter($source)
+	{
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
+
+		return $this->adapter->import($source);
+
+	}
+
 	/**
 	 * @see DependentObjectTrait
 	 *
@@ -329,6 +371,10 @@ class EntityImport implements EntityImportInterface
 			array(
 				'name' => 'Acl\Model\Wrapper\EntityWrapperInterface',
 				'object' => $this->wrapper,
+			),
+			array(
+				'name' => 'Acl\Model\Import\ImportAdapterInterface',
+				'object' => $this->adapter,
 			),
 		);
 	}

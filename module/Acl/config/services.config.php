@@ -11,6 +11,7 @@ return array(
 		'Acl\Form\UserLogin\InputFilter' => 'Acl\Model\Form\UserLoginFormInputFilter',
 		'Acl\Form\UserProfile\InputFilter' => 'Acl\Model\Form\UserProfileFormInputFilter',
 		'Acl\Wrapper\User' => 'Acl\Model\Wrapper\UserWrapper',
+		'Acl\Import\Adapter\CsvFile' => 'Acl\Model\Import\CsvFileImportAdapter',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -145,12 +146,14 @@ return array(
 			$manager = $sm->get('Acl\Entity\Manager');
 			$factory = $sm->get('Acl\Factory\User');
 			$wrapper = $sm->get('Acl\Wrapper\User');
+			$adapter = $sm->get('Acl\Import\Adapter\CsvFile');
 
 			$import = new \Acl\Model\Import\EntityImport();
 			$import
 				->setManager($manager)
 				->setFactory($factory)
-				->setWrapper($wrapper);
+				->setWrapper($wrapper)
+				->setAdapter($adapter);
 
 			return $import;
 		},

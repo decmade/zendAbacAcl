@@ -1,5 +1,5 @@
 <?php
-	$form = $this->form;
+	$form = $this->form->prepare();
 	$form->setAttribute('action', $this->url('acl/user/save'));
 	$form->setAttribute('class', 'form-horizontal');
 	$user = $this->currentUser();

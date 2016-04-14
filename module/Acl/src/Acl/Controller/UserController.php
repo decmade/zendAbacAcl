@@ -276,36 +276,19 @@ class UserController extends AbstractEntityController
 
 	public function importAction()
 	{
-		$testData = array(
-			array(
-				'identity' => 'dev',
-				'credential' => 'testPass',
-			),
-			array(
-				'identity' => 'e20019222',
-				'credential' => 'password',
-			),
-			array(
-				'identity' => 'e20057025',
-				'credential' => 'password',
-				'status' => 0,
-			),
-			array(
-				'identity' => 'e19912221',
-				'credential' => 'password',
-			),
-			array(
-				'identity' => 'e19790808',
-				'credential' => 'password',
-			),
-		);
+		$importFile = implode(DIRECTORY_SEPARATOR, array(
+			__DIR__,
+			'..',
+			'Uploads',
+			'users.csv',
+		));
 
 		$options = array(
 			'isDefinitive' => 'true',
 		);
 
 		$userImport = $this->getServiceLocator()->get('Acl\Import\User');
-		$userImport->import($testData, $options);
+		$userImport->import($importFile, $options);
 	}
 
 	/**

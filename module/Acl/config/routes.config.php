@@ -105,7 +105,11 @@ return array(
 								'route' => '/import',
 								'defaults' => array(
 									'action' => 'import',
-									$aclDqlKey => null,
+									$aclDqlKey => array(
+										array(
+											"a.name = 'developer' and a.value = '1'",
+										),
+									),
 								),
 							),
 						),

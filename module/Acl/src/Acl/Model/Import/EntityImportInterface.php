@@ -31,9 +31,11 @@ interface EntityImportInterface
 	 *  ->updatedRecords
 	 *
 	 *
-	 * @param array $data
+	 * @param mixed $source
+	 * @param array $options
+	 *
 	 *
 	 * @return array
 	 */
-	public function import(array $data, array $options = array());
+	public function import($data, array $options = array());
 }
