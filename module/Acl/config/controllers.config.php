@@ -7,10 +7,13 @@ return array(
 			$sm = $serviceLocator->getServiceLocator();
 
 			$authenticationService = $sm->get('Acl\Authentication\Service');
+			$importForm = $sm->get('Acl\Form\Import');
 
 			$controller = new \Acl\Controller\IndexController();
 			$controller
-				->setAuthenticationService($authenticationService);
+				->setAuthenticationService($authenticationService)
+				->setImportForm($importForm)
+			;
 
 			return $controller;
 		},
@@ -25,6 +28,7 @@ return array(
 			$authService = $sm->get('Acl\Authentication\Service');
 			$authAdapter = $sm->get('Acl\Authentication\Adapter');
 			$routeForwardingContainer = $sm->get('Acl\Authentication\Storage\RouteForwarding');
+			$userImport = $sm->get('Acl\Import\User');
 
 			$controller = new \Acl\Controller\UserController();
 			$controller
@@ -36,6 +40,7 @@ return array(
 				->setAuthenticationService($authService)
 				->setAuthenticationAdapter($authAdapter)
 				->setRouteForwardingContainer($routeForwardingContainer)
+				->setUserImport($userImport);
 			;
 
 			return $controller;

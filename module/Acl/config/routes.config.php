@@ -27,6 +27,20 @@ return array(
 			),
 			'may_terminate' => true,
 			'child_routes' => array(
+				'import' => array(
+					'type' => 'segment',
+					'options' => array(
+						'route' => '/import',
+						'defaults' => array(
+							'action' => 'import',
+							$aclDqlKey => array(
+								array(
+									"a.name = 'siteadministrator' and a.value not in ('','0','false')",
+								)
+							)
+						),
+					),
+				),
 				'user' => array(
 					'type' => 'segment',
 					'options' => array(

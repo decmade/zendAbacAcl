@@ -10,6 +10,7 @@ return array(
 		'Acl\DefaultViewModel' => 'Zend\View\Model\ViewModel',
 		'Acl\Form\UserLogin\InputFilter' => 'Acl\Model\Form\UserLoginFormInputFilter',
 		'Acl\Form\UserProfile\InputFilter' => 'Acl\Model\Form\UserProfileFormInputFilter',
+		'Acl\Form\Import\InputFilter' => 'Acl\Model\Form\ImportFormInputFilter',
 		'Acl\Wrapper\User' => 'Acl\Model\Wrapper\UserWrapper',
 		'Acl\Wrapper\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinitionWrapper',
 		'Acl\Import\Adapter\CsvFile' => 'Acl\Model\Import\CsvFileImportAdapter',
@@ -146,6 +147,15 @@ return array(
 			$inputFilter = $sm->get('Acl\Form\UserProfile\InputFilter');
 
 			$form = new \Acl\Model\Form\UserProfileForm();
+			$form->setInputFilter($inputFilter);
+
+			return $form;
+		},
+		'Acl\Form\Import' => function($sm) {
+
+			$inputFilter = $sm->get('Acl\Form\Import\InputFilter');
+
+			$form = new \Acl\Model\Form\ImportForm();
 			$form->setInputFilter($inputFilter);
 
 			return $form;

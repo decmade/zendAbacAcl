@@ -80,7 +80,7 @@
 			</div>
 		</div>
 
-		<!--  CONFIRM NER PASSWORD INPUT -->
+		<!--  CONFIRM NEW PASSWORD INPUT -->
 		<div class="form-group">
 			<?php echo $this->formLabel($form->get('newCredential-2')); ?>
 			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
@@ -153,7 +153,22 @@
 	*/
 	function newPasswordConfirmed()
 	{
-		return ( $('#<?php echo $form->get('newCredential-1')->getAttribute('id'); ?>').val() == $('#<?php echo $form->get('newCredential-2')->getAttribute('id'); ?>').val() );
+		var credentialA = $('#<?php echo $form->get('newCredential-1')->getAttribute('id'); ?>').val();
+		var credentialB = $('#<?php echo $form->get('newCredential-2')->getAttribute('id'); ?>').val();
+
+			switch(true) {
+				case (credentialA == '' ) :
+					return false;
+					break;
+				case (credentialB == '') :
+					return false;
+					break;
+				case (credentialA == credentialB) :
+					return true;
+					break;
+				default :
+					return false;
+			}
 	}
 
 

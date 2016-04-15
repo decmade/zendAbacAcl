@@ -12,6 +12,7 @@ namespace Acl\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Authentication\AuthenticationServiceInterface;
 use Acl\Model\DependentObjectTrait;
+use Zend\Form\Form;
 
 class IndexController extends AbstractActionController
 {
@@ -25,13 +26,31 @@ class IndexController extends AbstractActionController
 
 	/**
 	 *
+	 * @var Form
+	 */
+	private $importForm;
+
+	/**
+	 *
 	 * @param AuthenticationServiceInterface $service
 	 *
-	 * @return $this
+	 * @return self
 	 */
 	public function setAuthenticationService(AuthenticationServiceInterface $service)
 	{
 		$this->authenticationService = $service;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param Form $form
+	 *
+	 * @return self
+	 */
+	public function setImportForm(Form $form)
+	{
+		$this->importForm = $form;
 		return $this;
 	}
 
@@ -76,6 +95,18 @@ class IndexController extends AbstractActionController
 
     	return array(
 			'userId' => $userId,
+    	);
+    }
+
+    public function importAction()
+    {
+		/*
+		 * run dependency check
+		 */
+    	$this->checkDependencies();
+
+    	return array(
+    		'form' => $this->importForm,
     	);
     }
 
@@ -142,6 +173,10 @@ class IndexController extends AbstractActionController
     			'name' => 'Zend\Authentication\AuthenticationService',
     			'object' => $this->authenticationService,
     		),
+    		array(
+    			'name' => 'Acl\Model\Form\ImportForm',
+    			'object' => $this->importForm,
+    		)
     	);
     }
 }

@@ -1,15 +1,50 @@
 <?php
 	$messages = $this->messages;
 	$counts = $this->counts;
+	$errorCount = count($messages);
 ?>
 <div class="row">
 	<div class="page-header">
-		<h1>User Import</h1>
+		<h1>User Import Results</h1>
 	</div>
 </div>
-<pre>
-	<?php
-		echo print_r($messages, true);
-		echo print_r($counts, true);
-	?>
-</pre>
+<div class="row">
+	<div class="col-md-2"></div>
+	<div class="col-md-8">
+		<div class="panel panel-default">
+			<div class="panel-heading" style="font-size:18px;">
+				<table style="width:100%;">
+				<col width="*" />
+				<col width="20%" />
+				<col width="15%" />
+				<col width="15%" />
+				<col width="15%" />
+				<tr style="text-align:center;">
+					<td style="font-weight:bold;text-align:left;">Import Statistics</td>
+					<td><span class="label label-primary">Total Records&nbsp;<span class="badge alert-info"><?php echo $counts['total']; ?></span></span></td>
+					<td><span class="label label-success">Added&nbsp;<span class="badge alert-success"><?php echo $counts['added']; ?></span></span></td>
+					<td><span class="label label-warning">Updated&nbsp;<span class="badge alert-warning"><?php echo $counts['total']; ?></span></span></td>
+					<td><span class="label label-danger">Errors&nbsp;<span class="badge alert-danger"><?php echo $errorCount; ?></span></span></td>
+				</tr>
+				</table>
+			</div>
+			<div class="panel-body">
+			<?php if ($errorCount > 0 ) :?>
+				<table class="table">
+					<col width="5%" />
+					<col width="*" />
+					<tr>
+						<th>Counter</th>
+						<th>Message</th>
+					</tr>
+					<?php echo $this->partialLoop('acl/user/partial/import-error', $messages);?>
+				</table>
+			<?php else : ?>
+				<h2 style="text-align:center;">no error messages ... Awesomeness!</h2>
+			<?php endif; ?>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-2"></div>
+</div>
+

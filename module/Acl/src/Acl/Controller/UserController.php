@@ -8,6 +8,7 @@ use Zend\Authentication\AuthenticationService;
 use Acl\Model\Authentication\DoctrineAuthenticationAdapter;
 use Zend\Session\Container;
 use Acl\Entity\User;
+use Acl\Model\Import\EntityImportInterface;
 
 class UserController extends AbstractEntityController
 {
@@ -43,6 +44,12 @@ class UserController extends AbstractEntityController
 	 * @var Container
 	 */
 	protected $routeForwardingContainer;
+
+	/**
+	 *
+	 * @var EntityImportInterface
+	 */
+	protected $userImport;
 
 	/**
 	 *
@@ -101,6 +108,18 @@ class UserController extends AbstractEntityController
 	public function setRouteForwardingContainer(Container $container)
 	{
 		$this->routeForwardingContainer = $container;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param EntityImportInterface $import
+	 *
+	 * @return self
+	 */
+	public function setUserImport(EntityImportInterface $import)
+	{
+		$this->userImport = $import;
 		return $this;
 	}
 
@@ -274,8 +293,18 @@ class UserController extends AbstractEntityController
 		$this->redirect()->toRoute('acl/user/edit');
 	}
 
+	/**
+	 *
+	 */
 	public function importAction()
 	{
+		/*
+		 * run dependency checks
+		 */
+		$this->checkDependencies('getLocalDependenciesConfig');
+
+		$import = $this->userImport;
+
 		$importFile = implode(DIRECTORY_SEPARATOR, array(
 			__DIR__,
 			'..',
@@ -287,8 +316,7 @@ class UserController extends AbstractEntityController
 			'isDefinitive' => 'true',
 		);
 
-		$userImport = $this->getServiceLocator()->get('Acl\Import\User');
-		return $userImport->import($importFile, $options);
+		return $import->import($importFile, $options);
 
 
 	}
@@ -318,6 +346,10 @@ class UserController extends AbstractEntityController
 			array(
 				'name' => 'Zend\Session\Container',
 				'object' => $this->routeForwardingContainer,
+			),
+			array(
+				'name' => 'Acl\Model\Import\EntityImportInterface',
+				'object' => $this->userImport,
 			),
 		);
 	}
