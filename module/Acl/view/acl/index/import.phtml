@@ -32,12 +32,13 @@
 	$form->get('submit')->setAttribute('class', 'btn btn-success');
 
 
-	$defaultInputColumnWidth = 3;
+	$defaultHeadingColumnWidth = 2;
+	$defaultInputColumnWidth = 4;
 
 ?>
 <div class="row">
 	<div class="page-header">
-		<h1>ACL Imports</h1>
+		<h1>ACL Data Imports</h1>
 	</div>
 </div>
 
@@ -48,31 +49,49 @@
 	<div class="col-md-10">
 		<?php echo $this->form()->openTag($form); ?>
 
-		<!--  NEW PASSWORD INPUT -->
+		<!--  UPLOAD TYPE SELECTOR -->
 		<div class="form-group">
-			<?php echo $this->formLabel($form->get('uploadType')); ?>
+			<div class="col-md-<?php echo $defaultHeadingColumnWidth; ?>">
+				<?php echo $this->formLabel($form->get('uploadType')); ?>
+			</div>
+
 			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
 				<?php echo $this->formSelect($form->get('uploadType')); ?>
 			</div>
 		</div>
 
-		<!--  CONFIRM NEW PASSWORD INPUT -->
+		<!--  FILE UPLOAD INPUT -->
 		<div class="form-group">
-			<?php echo $this->formLabel($form->get('uploadFile')); ?>
+			<div class="col-md-<?php echo $defaultHeadingColumnWidth; ?>">
+				<?php echo $this->formLabel($form->get('uploadFile')); ?>
+			</div>
+
 			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
-				<!--  <div class="input-group">-->
 					<?php echo $this->formFile($form->get('uploadFile')); ?>
-					<!-- <span class="input-group-addon" id="confirmPasswordInputGroup"><span class="glyphicon glyphicon-pencil" id="confirmPasswordGlyphicon"></span></span> -->
-				<!-- </div> -->
+			</div>
+		</div>
+
+		<!--  isDefinitive OPTION CHECKBOX -->
+		<div class="form-group">
+			<div class="col-md-<?php echo $defaultHeadingColumnWidth; ?>">
+				&nbsp;
+			</div>
+
+			<div class="col-md-<?php echo (12 - $defaultHeadingColumnWidth); ?>">
+				<?php echo $this->formCheckbox($form->get('isDefinitive')); ?>
+				&nbsp;
+				<span style="font-weight:bold; font-size:14px;" class="isDefinitive">
+					<?php echo $form->get('isDefinitive')->getLabel(); ?>
+				</span>
 			</div>
 		</div>
 
 		<!--  SUBMIT BUTTON -->
 		<div class="form-group">
-			<div class="<?php
-				$elements = array_values($form->getElements());
-				$firstElement = $elements[0];
-				echo $firstElement->getLabelAttributes()['class']; ?>">&nbsp;</div>
+			<div class="col-md-<?php echo $defaultHeadingColumnWidth; ?>">
+				&nbsp;
+			</div>
+
 			<div class="col-md-<?php echo $defaultInputColumnWidth; ?>">
 				<?php echo $this->formSubmit($form->get('submit')); ?>
 			</div>
@@ -83,15 +102,26 @@
 </div>
 
 <script type="text/javascript">
-	var fileInput = $('#<?php echo $form->get('uploadFile')->getAttribute('id'); ?>');
+	var fileTypeInput = $('#<?php echo $form->get('uploadType')->getAttribute('id'); ?>');
+	var filePathInput = $('#<?php echo $form->get('uploadFile')->getAttribute('id'); ?>');
+
 
 	$(document).ready(function() {
+		$('form').attr('action', $(fileTypeInput).val() );
+
 		/*
 			apply Bootstrap CSS styling to all file upload controls
 		*/
+		$('input[type="checkbox"]')
+			.removeClass('form-control');
+
 		$('input[type="file"]')
 			.removeClass('form-control')
 			.addClass('file');
+
+		$(fileTypeInput).change($('form').attr('action',$(fileTypeInput).val()) );
+
+
 	});
 
 

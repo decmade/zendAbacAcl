@@ -110,62 +110,11 @@ class IndexController extends AbstractActionController
     	);
     }
 
-    private function authenticationTest()
-    {
-    	$sm = $this->getServiceLocator();
-    	$em = $sm->get('Acl\Entity\Manager');
-    	$authService = $sm->get('Acl\Authentication\Service');
-    	$authAdapter = $sm->get('Acl\Authentication\Adapter');
 
-    	if ($authService->hasIdentity()) {
-    		$identity = $authService->getIdentity();
-
-    		return array(
-    			'identity' => $identity,
-    			'messages' => array(
-    				sprintf("User ID[%s] already logged in.", $identity),
-    			),
-    		);
-    	} else {
-    		$authAdapter
-	    		->setIdentity('dev')
-	    		->setCredential('testPass');
-    		$result = $authService->authenticate($authAdapter);
-
-    		if ($result->getCode() == $result::SUCCESS) {
-    			$identity = $authService->getIdentity();
-
-	    		return array(
-	    			'identity' => $identity,
-	    			'messages' => array(
-	    				sprintf("User ID[%s] successfully logged in.", $identity),
-	    			),
-	    		);
-    		} else {
-    			return array(
-    				'identity' => '',
-    				'messages' => $authService->getMessages(),
-    			);
-    		}
-    	}
-
-    	return $output;
-    }
-
-    private function testUserCreation()
-    {
-    	$em = $this->getServiceLocator()->get('Acl\Entity\Manager');
-    	$user = new \Acl\Entity\User();
-    	$user
-    		->setIdentity('dev')
-    		->setCredential('testPass');
-
-    	$em->persist($user);
-    	$em->flush();
-
-    	return $user;
-    }
-
+    /**
+     *
+     * @return array
+     */
     protected function getDependenciesConfig()
     {
     	return array(
@@ -176,7 +125,7 @@ class IndexController extends AbstractActionController
     		array(
     			'name' => 'Acl\Model\Form\ImportForm',
     			'object' => $this->importForm,
-    		)
+    		),
     	);
     }
 }

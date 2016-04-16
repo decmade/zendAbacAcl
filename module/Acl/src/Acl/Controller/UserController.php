@@ -9,6 +9,7 @@ use Acl\Model\Authentication\DoctrineAuthenticationAdapter;
 use Zend\Session\Container;
 use Acl\Entity\User;
 use Acl\Model\Import\EntityImportInterface;
+use Zend\Http\PhpEnvironment\Response;
 
 class UserController extends AbstractEntityController
 {
@@ -16,25 +17,25 @@ class UserController extends AbstractEntityController
 	 *
 	 * @var Form
 	 */
-	protected $loginForm;
+	private $loginForm;
 
 	/**
 	 *
 	 * @var Form
 	 */
-	protected $profileForm;
+	private $profileForm;
 
 	/**
 	 *
 	 * @var AuthenticationService
 	 */
-	protected $authenticationService;
+	private $authenticationService;
 
 	/**
 	 *
 	 * @var DoctrineAuthenticationAdapter
 	 */
-	protected $authenticationAdapter;
+	private $authenticationAdapter;
 
 	/**
 	 * used to persist a destination while authentication is pending
@@ -43,13 +44,19 @@ class UserController extends AbstractEntityController
 	 *
 	 * @var Container
 	 */
-	protected $routeForwardingContainer;
+	private $routeForwardingContainer;
 
 	/**
 	 *
 	 * @var EntityImportInterface
 	 */
-	protected $userImport;
+	private $userImport;
+
+	/**
+	 *
+	 * @var Form
+	 */
+	private $importForm;
 
 	/**
 	 *
@@ -120,6 +127,18 @@ class UserController extends AbstractEntityController
 	public function setUserImport(EntityImportInterface $import)
 	{
 		$this->userImport = $import;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param Form $form
+	 *
+	 * @return self
+	 */
+	public function setImportForm(Form $form)
+	{
+		$this->importForm = $form;
 		return $this;
 	}
 
@@ -303,21 +322,46 @@ class UserController extends AbstractEntityController
 		 */
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-		$import = $this->userImport;
+    	$request = $this->getRequest();
+    	$form = $this->importForm;
+    	$import = $this->userImport;
 
-		$importFile = implode(DIRECTORY_SEPARATOR, array(
-			__DIR__,
-			'..',
-			'Uploads',
-			'users.csv',
-		));
+   		$tmpFile = null;
+   		$options = array();
 
-		$options = array(
-			'isDefinitive' => 'true',
-		);
+		$prg = $this->fileprg($form);
 
-		return $import->import($importFile, $options);
+		switch(true) {
+    		case ( $prg instanceof Response) :
+    			return $prg;
+    			break;
+    		case ( is_array($prg)) :
 
+    			if ($form->isValid()) {
+    				$data = $form->getData();
+    				$tmpFile = $data['uploadFile']['tmp_name'];
+    				$options = array(
+    					'isDefinitive' => $data['isDefinitive'],
+    				);
+    			} else {
+    				$fileInput = $form->get('uploadFile');
+    				$errors = $fileInput->getMessages();
+
+    				if (!empty($errors)) {
+						foreach($form->get('uploadFile')->getMessages() as $message) {
+							$this->queueMessage($message, 'error');
+						}
+						$this->redirect()->toRoute('acl/import');
+   					}
+
+   				}
+   				break;
+   		}
+
+   	   	$results = $import->import($tmpFile, $options);
+   	   	unlink($tmpFile);
+
+   	   	return $results;
 
 	}
 
@@ -351,6 +395,10 @@ class UserController extends AbstractEntityController
 				'name' => 'Acl\Model\Import\EntityImportInterface',
 				'object' => $this->userImport,
 			),
+			array(
+    			'name' => 'Acl\Model\Form\ImportForm',
+    			'object' => $this->importForm,
+    		),
 		);
 	}
 

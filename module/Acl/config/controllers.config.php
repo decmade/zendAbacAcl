@@ -29,7 +29,7 @@ return array(
 			$authAdapter = $sm->get('Acl\Authentication\Adapter');
 			$routeForwardingContainer = $sm->get('Acl\Authentication\Storage\RouteForwarding');
 			$userImport = $sm->get('Acl\Import\User');
-
+			$importForm = $sm->get('Acl\Form\Import');
 			$controller = new \Acl\Controller\UserController();
 			$controller
 				->setEntityManager($em)
@@ -40,7 +40,8 @@ return array(
 				->setAuthenticationService($authService)
 				->setAuthenticationAdapter($authAdapter)
 				->setRouteForwardingContainer($routeForwardingContainer)
-				->setUserImport($userImport);
+				->setUserImport($userImport)
+				->setImportForm($importForm)
 			;
 
 			return $controller;

@@ -15,13 +15,24 @@ class ImportFormInputFilter extends InputFilter
 			'filters' => array(
 				array('name' => 'StripTags'),
 				array('name' => 'StringTrim'),
+				array(
+					'name' => 'FileRenameUpload',
+					'options' => array(
+ 						'target' => implode(DIRECTORY_SEPARATOR, array(
+ 							__DIR__,
+ 							'uploads',
+ 							'import.csv',
+ 						)),
+						'randomize' => true,
+					),
+				),
 // 				array('name' => 'Zend\I18n\Filter\Alnum'),	// each Zend\I18n\Filter component requires the intl PHP extension
 			),
 			'validators' => array(
 				array(
 					'name' => 'FileMimeType',
 					'options' => array(
-						'mimeType' => 'text/csv',
+						'mimeType' => 'text/plain',
 						'messages' => array(
 						),
 					),

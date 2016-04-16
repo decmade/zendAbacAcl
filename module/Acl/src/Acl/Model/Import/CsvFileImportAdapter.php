@@ -39,7 +39,7 @@ class CsvFileImportAdapter implements ImportAdapterInterface
 		if (is_file($filePath)) {
 			return fopen($filePath, 'r');
 		} else {
-			return ull;
+			return null;
 		}
 	}
 

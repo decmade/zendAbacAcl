@@ -10,7 +10,7 @@ class ImportForm extends Form
 		parent::__construct('import');
 
 		/*
-		 * username field
+		 * upload type field
 		 */
 		$this->add(array(
 			'name' => 'uploadType',
@@ -18,8 +18,8 @@ class ImportForm extends Form
 			'options' => array(
 				'label' => 'Import Type',
 				'value_options' => array(
-					'acl/user/import' => 'Users',
-					'acl/attribute/import' => 'Attributes',
+					'/acl/user/import' => 'Users',
+					'/acl/attribute/import' => 'Attributes',
 				),
 			),
 			'attributes' => array(
@@ -27,17 +27,31 @@ class ImportForm extends Form
 		));
 
 		/*
-		 * password field
+		 * file upload field
 		 */
 		$this->add(array(
 			'name' => 'uploadFile',
 			'type'=> 'file',
 			'options' => array(
-				'label' => 'Select Import File',
+				'label' => 'Import From',
 			),
 			'attributes' => array(
 			),
 		));
+
+				/*
+		 * isDefinitive option field
+		 */
+		$this->add(array(
+			'name' => 'isDefinitive',
+			'type'=> 'checkbox',
+			'options' => array(
+				'label' => 'remove entities not included in uploaded file from the database.',
+			),
+			'attributes' => array(
+			),
+		));
+
 
 		/*
 		 * submit button
@@ -46,7 +60,7 @@ class ImportForm extends Form
 			'name' => 'submit',
 			'type' => 'submit',
 			'attributes' => array(
-				'value' => 'Import File',
+				'value' => 'Import Data',
 			),
 		));
 	}

@@ -216,6 +216,7 @@ class EntityImport implements EntityImportInterface
 			 */
 			switch(true) {
 				case ($this->getOption('isDefinitive') == 'true') :
+				case ($this->getOption('isDefinitive') == '1') :
 					$this->removeExistingEntities();
 					break;
 			}
