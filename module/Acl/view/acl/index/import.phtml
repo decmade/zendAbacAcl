@@ -119,7 +119,9 @@
 			.removeClass('form-control')
 			.addClass('file');
 
-		$(fileTypeInput).change($('form').attr('action',$(fileTypeInput).val()) );
+		$(fileTypeInput).change( function() {
+			$('#import').attr('action', $(fileTypeInput).val());
+		});
 
 
 	});

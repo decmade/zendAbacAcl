@@ -4,7 +4,7 @@ namespace Acl\Model\Wrapper;
 use Acl\Entity\EntityInterface;
 use Acl\Model\DependentObjectTrait;
 
-abstract class AbstractEntityWrapper implements EntityWrapperInterface
+abstract class AbstractEntityWrapper implements EntityWrapperInterface, EntityInterface
 {
 	use DependentObjectTrait;
 
@@ -50,7 +50,7 @@ abstract class AbstractEntityWrapper implements EntityWrapperInterface
 	 *
 	 * @param EntityInterface $entity
 	 *
-	 * @return $this
+	 * @return self
 	 */
 	public function setEntity(EntityInterface $entity)
 	{
@@ -64,5 +64,84 @@ abstract class AbstractEntityWrapper implements EntityWrapperInterface
 	public function getEntity()
 	{
 		return $this->entity;
+	}
+
+	/*
+	 * BEGIN: FACADE METHODS
+	 */
+
+	/**
+	 * @return int
+	 */
+	public function getId()
+	{
+		if ($this->hasDependencies()) {
+			return $this->entity->getId();
+		} else {
+			return 0;
+		}
+	}
+
+	/**
+	 * @return DateTime|null
+	 */
+	public function getAdded()
+	{
+		if ($this->hasDependencies()) {
+			return $this->entity->getAdded();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * @return DateTime|null
+	 */
+	public function getRemoved()
+	{
+		if ($this->hasDependencies()) {
+			return $this->entity->getRemoved();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * @return self
+	 */
+	public function setRemoved()
+	{
+		if ($this->hasDependencies()) {
+			$this->entity->setRemoved();
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return self
+	 */
+	public function clearRemoved()
+	{
+		if ($this->hasDependencies()) {
+			$this->entity->clearRemoved();
+		}
+
+		return $this;
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Acl\Entity\EntityInterface::getEntityClass()
+	 */
+	static public function getEntityClass()
+	{
+		if ($this->hasDependencies()) {
+			$entity = $this->entity;
+			return $entity::getEntityClass();
+		} else {
+			return '';
+		}
 	}
 }

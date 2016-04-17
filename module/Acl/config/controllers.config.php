@@ -45,8 +45,25 @@ return array(
 			;
 
 			return $controller;
-
 		},
+		'Acl\Controller\Attribute' => function($serviceLocator) {
+			$sm = $serviceLocator->getServiceLocator();
 
+			$em = $sm->get('Acl\Entity\Manager');
+			$factory = $sm->get('Acl\Factory\Attribute');
+			$wrapper = $sm->get('Acl\Wrapper\Attribute');
+			$attributeImport = $sm->get('Acl\Import\Attribute');
+			$importForm = $sm->get('Acl\Form\Import');
+			$controller = new \Acl\Controller\UserController();
+			$controller
+				->setEntityManager($em)
+				->setFactory($factory)
+				->setWrapper($wrapper)
+				->setAttributeImport($attributeImport)
+				->setImportForm($importForm)
+			;
+
+			return $controller;
+		},
 	),
 );

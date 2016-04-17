@@ -83,6 +83,25 @@ class UserWrapper extends AbstractEntityWrapper
 	}
 
 	/**
+	 * get a user attribute by name
+	 *
+	 * @param string $name
+	 *
+	 * @return Attribute
+	 */
+	public function getAttribute($name)
+	{
+		$name = strtolower($name);
+		$attributes = $this->getAttributes();
+
+		$filter = function($attribute) use ($name) {
+			return ($attribute->getName() == $name);
+		};
+
+		return array_filter($attributes, $filter);
+	}
+
+	/**
 	 * @return array
 	 */
 	protected function getDependenciesConfig()
@@ -98,7 +117,8 @@ class UserWrapper extends AbstractEntityWrapper
 	/*
 	 * BEGIN: Facade Methods
 	 */
-/**
+
+	/**
 	 * @return string
 	 */
 	public function getIdentity()

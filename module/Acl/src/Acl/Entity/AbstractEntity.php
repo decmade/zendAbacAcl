@@ -83,7 +83,7 @@ abstract class AbstractEntity implements EntityInterface
 	 * removed dates
 	 *
 	 *
-	 * @return $this
+	 * @return self
 	 */
 	public function setRemoved()
 	{

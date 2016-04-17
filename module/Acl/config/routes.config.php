@@ -41,6 +41,30 @@ return array(
 						),
 					),
 				),
+				'attribute' => array(
+					'type' => 'segment',
+					'options' => array(
+						'route' => '/attribute',
+						'defaults' => array(
+							'controller' => 'Acl\Controller\Attribute',
+							'action' => 'index',
+							$aclDqlKey => null,
+						),
+					),
+					'may_terminate' => true,
+					'child_routes' => array(
+						'import' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/import',
+								'defaults' => array(
+									'action' => 'deny',
+									$aclDqlKey => null,
+								),
+							),
+						),
+					),
+				),
 				'user' => array(
 					'type' => 'segment',
 					'options' => array(

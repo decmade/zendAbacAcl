@@ -5,14 +5,12 @@ use Zend\View\Helper\AbstractHelper;
 use Zend\Authentication\AuthenticationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Acl\Model\DependentObjectTrait;
-use Zend\View\Model\ViewModel;
 use Acl\Entity\User;
+use Acl\Model\Wrapper\UserWrapper;
 
 class CurrentUser extends AbstractHelper
 {
 	use DependentObjectTrait;
-
-	const USER_REPOSITORY_CLASS = 'Acl\Entity\User';
 
 	/**
 	 *
@@ -38,10 +36,18 @@ class CurrentUser extends AbstractHelper
 	private $guestUser;
 
 	/**
+	 * wrapper class that adds extra functionality to
+	 * the user class
+	 *
+	 * @var UserWrapper $wrapper
+	 */
+	private $wrapper;
+
+	/**
 	 *
 	 * @param AuthenticationService $service
 	 *
-	 * @return $this
+	 * @return self
 	 */
 	public function setAuthenticationService(AuthenticationService $service)
 	{
@@ -53,7 +59,7 @@ class CurrentUser extends AbstractHelper
 	 *
 	 * @param EntityManagerInterface $em
 	 *
-	 * @return $this
+	 * @return self
 	 */
 	public function setEntityManager(EntityManagerInterface $em)
 	{
@@ -65,11 +71,23 @@ class CurrentUser extends AbstractHelper
 	 *
 	 * @param User $guest
 	 *
-	 * @return $this
+	 * @return self
 	 */
 	public function setGuestUser(User $guest)
 	{
 		$this->guestUser = $guest;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param UserWrapper $wrapper
+	 *
+	 * @return self
+	 */
+	public function setWrapper(UserWrapper $wrapper)
+	{
+		$this->wrapper = $wrapper;
 		return $this;
 	}
 
@@ -81,12 +99,14 @@ class CurrentUser extends AbstractHelper
 		$this->checkDependencies();
 
 		$userId = $this->getAuthenticatedUserId();
+		$user = $this->guestUser;
+		$wrapper = $this->wrapper;
 
-		if ($userId == null) {
-			return $this->guestUser;
-		} else {
-			return $this->getUserById($userId);
+		if ($userId != null) {
+			$user = $this->getUserById($userId);
 		}
+
+		return $wrapper->setEntity($user);
 	}
 
 
@@ -108,6 +128,10 @@ class CurrentUser extends AbstractHelper
 				'name' => 'Acl\Entity\User',
 				'object' => $this->guestUser,
 			),
+			array(
+				'name' => 'Acl\Model\Wrapper\UserWrapper',
+				'object' => $this->wrapper,
+			),
 		);
 	}
 
@@ -128,7 +152,7 @@ class CurrentUser extends AbstractHelper
 
 		$em = $this->entityManager;
 
-		return $em->getRepository(self::USER_REPOSITORY_CLASS)->find($id);
+		return $em->getRepository(User::getEntityClass())->find($id);
 	}
 
 	/**

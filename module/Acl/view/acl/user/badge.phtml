@@ -1,6 +1,8 @@
 <?php
 	$user = $this->currentUser();
+	$siteAdminValue = $user->getAttribute('siteAdministrator');
 	$isGuest = ($user->getId() == 0);
+
 
 	/*
 	 * customize styles, buttons classes, and dropdown
@@ -34,13 +36,23 @@
 				'label' => 'Profile',
 				'icon' => 'glyphicon glyphicon-user',
 				'url' => $this->url('acl/user/edit'),
-			),
-			array(), // an empty array creates a divider
-			array(
+			)
+		);
+
+		if ($siteAdminValue) {
+			$dropdownActions[] = array(
+				'label' => 'Imports',
+				'icon' => 'glyphicon glyphicon-folder-open',
+				'url' => $this->url('acl/import'),
+			);
+		}
+
+		$dropdownActions[] = array(); // an empty array creates a divider
+
+		$dropdownActions[] = array(
 				'label' => 'Sign Out',
 				'icon' => 'glyphicon glyphicon-log-out',
 				'url' => $this->url('acl/user/logout')
-			),
 		);
 
 		$btnClasses = array(

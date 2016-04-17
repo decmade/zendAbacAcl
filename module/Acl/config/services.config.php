@@ -7,11 +7,13 @@ return array(
 		'Acl\Authentication\Result' => 'Acl\Model\Authentication\Result',
 		'Acl\Entity\Session' => 'Acl\Entity\Session',
 		'Acl\Entity\User' => 'Acl\Entity\User',
+		'Acl\Entity\Attribute' => 'Acl\Entity\Attribute',
 		'Acl\DefaultViewModel' => 'Zend\View\Model\ViewModel',
 		'Acl\Form\UserLogin\InputFilter' => 'Acl\Model\Form\UserLoginFormInputFilter',
 		'Acl\Form\UserProfile\InputFilter' => 'Acl\Model\Form\UserProfileFormInputFilter',
 		'Acl\Form\Import\InputFilter' => 'Acl\Model\Form\ImportFormInputFilter',
 		'Acl\Wrapper\User' => 'Acl\Model\Wrapper\UserWrapper',
+		'Acl\Wrapper\Attribute' => 'Acl\Model\Wrapper\AttributeWrapper',
 		'Acl\Wrapper\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinitionWrapper',
 		'Acl\Import\Adapter\CsvFile' => 'Acl\Model\Import\CsvFileImportAdapter',
 		'Acl\Import\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinition',
@@ -114,7 +116,15 @@ return array(
 
 			return $user;
 		},
+		'Acl\Factory\Attribute' => function($sm) {
+			$attribute = $sm->get('Acl\Entity\Attribute');
 
+			$factory = new \Acl\Model\Factory\AttributeFactory();
+			$factory
+				->setPrototype($attribute);
+
+			return $factory;
+		},
 		'Acl\Factory\User' => function($sm) {
 			$user = $sm->get('Acl\Entity\User');
 
@@ -207,6 +217,24 @@ return array(
 			$wrapper = $sm->get('Acl\Wrapper\User');
 			$adapter = $sm->get('Acl\Import\Adapter\CsvFile');
 			$validator = $sm->get('Acl\Import\User\Validator');
+
+			$import = new \Acl\Model\Import\EntityImport();
+			$import
+				->setManager($manager)
+				->setFactory($factory)
+				->setWrapper($wrapper)
+				->setAdapter($adapter)
+				->setValidator($validator)
+			;
+
+			return $import;
+		},
+		'Acl\Import\Attribute' => function($sm) {
+			$manager = $sm->get('Acl\Entity\Manager');
+			$factory = $sm->get('Acl\Factory\Attribute');
+			$wrapper = $sm->get('Acl\Wrapper\Attribute');
+			$adapter = $sm->get('Acl\Import\Adapter\CsvFile');
+			$validator = $sm->get('Acl\Import\Attribute\Validator');
 
 			$import = new \Acl\Model\Import\EntityImport();
 			$import

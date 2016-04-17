@@ -50,10 +50,10 @@
 			<strong>Identity:</strong>&nbsp;<?php echo $user->getIdentity(); ?><br />
 			<strong>Status:</strong>&nbsp;<?php
 				switch($user->getStatus()) {
-					case $user::STATUS_ACTIVE :
+					case \Acl\Entity\User::STATUS_ACTIVE :
 						echo '<span class="badge alert-success">Active</span>';
 						break;
-					case $user::STATUS_INACTIVE :
+					case \Acl\Entity\User::STATUS_INACTIVE :
 						echo '<span class="badge alert-danger">Inactive</span>';
 						break;
 					default :
