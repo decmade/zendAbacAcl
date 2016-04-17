@@ -1,6 +1,7 @@
 <?php
 namespace Acl\Model\Wrapper;
 
+use Acl\Entity\EntityInterface;
 class AttributeWrapper extends AbstractEntityWrapper
 {
 	/**
@@ -44,7 +45,7 @@ class AttributeWrapper extends AbstractEntityWrapper
 	 *
 	 * @return self
 	 */
-	public function copy(Attribute $subject)
+	public function copy(EntityInterface $template)
 	{
 		/*
 		 * run dependency check
@@ -53,14 +54,27 @@ class AttributeWrapper extends AbstractEntityWrapper
 			$entity = $this->entity;
 
 			$entity
-				->setName($subject->getName())
-				->setValue($subject->getValue())
+				->setValue($template->getValue())
 			;
+
+		/*
+		 * if the subject has been removed but the copy is not removed
+		 */
+			if ($entity->getRemoved() != null && $template->getRemoved() == null ) {
+				$entity	->clearRemoved();
+			}
 		}
+
+
 
 		return $this;
 	}
 
+	/**
+	 *
+	 * {@inheritDoc}
+	 * @see \Acl\Model\Wrapper\AbstractEntityWrapper::getUniquePropertiesArray()
+	 */
 	public function getUniquePropertiesArray()
 	{
 		/**
@@ -72,7 +86,6 @@ class AttributeWrapper extends AbstractEntityWrapper
 			return array(
 				'user' => $entity->getUser(),
 				'name' => $entity->getName(),
-				'value' => $entity->getValue(),
 			);
 		} else {
 			return array();
@@ -146,6 +159,34 @@ class AttributeWrapper extends AbstractEntityWrapper
 	{
 		if ($this->hasDependencies()) {
 			$this->entity->setValue($value);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * @return User
+	 */
+	public function getUser()
+	{
+		if ($this->hasDependencies()) {
+			return $this->entity->getUser();
+		} else {
+			return null;
+		}
+
+	}
+
+	/**
+	 *
+	 * @param User $user
+	 *
+	 * @return $this
+	 */
+	public function setUser(User $user)
+	{
+		if ($this->hasDependencies()) {
+			$this->entity->setUser($user);
 		}
 
 		return $this;

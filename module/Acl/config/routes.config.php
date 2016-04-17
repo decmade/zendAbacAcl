@@ -34,10 +34,8 @@ return array(
 						'defaults' => array(
 							'action' => 'import',
 							$aclDqlKey => array(
-								array(
 									"a.name = 'siteadministrator' and a.value not in ('','0','false')",
-								)
-							)
+							),
 						),
 					),
 				),
@@ -58,8 +56,10 @@ return array(
 							'options' => array(
 								'route' => '/import',
 								'defaults' => array(
-									'action' => 'deny',
-									$aclDqlKey => null,
+									'action' => 'import',
+									$aclDqlKey => array(
+										"a.name = 'siteadministrator' and a.value not in ('','0','false')",
+									),
 								),
 							),
 						),
@@ -144,9 +144,7 @@ return array(
 								'defaults' => array(
 									'action' => 'import',
 									$aclDqlKey => array(
-										array(
-											"a.name = 'developer' and a.value = '1'",
-										),
+										"a.name = 'siteadministrator' and a.value not in ('','0','false')",
 									),
 								),
 							),

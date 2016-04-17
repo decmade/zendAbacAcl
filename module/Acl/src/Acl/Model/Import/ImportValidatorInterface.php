@@ -9,15 +9,8 @@ interface ImportValidatorInterface
 	 *
 	 * @return self
 	 */
-	public function addColumnDefinition(ColumnDefinition $definition);
+	public function addColumnDefinition(ColumnDefinitionInterface $definition);
 
-	/**
-	 *
-	 * @param ColumnDefinitionWrapper $wrapper
-	 *
-	 * @return self
-	 */
-	public function setColumnDefinitionWrapper(ColumnDefinitionWrapper $wrapper);
 
 	/**
 	 * get error messages that are populated with causes for

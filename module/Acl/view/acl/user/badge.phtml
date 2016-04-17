@@ -1,6 +1,6 @@
 <?php
 	$user = $this->currentUser();
-	$siteAdminValue = $user->getAttribute('siteAdministrator');
+	$isSiteAdmin= ( $user->getAttribute('siteAdministrator'));
 	$isGuest = ($user->getId() == 0);
 
 
@@ -39,7 +39,7 @@
 			)
 		);
 
-		if ($siteAdminValue) {
+		if ($isSiteAdmin) {
 			$dropdownActions[] = array(
 				'label' => 'Imports',
 				'icon' => 'glyphicon glyphicon-folder-open',

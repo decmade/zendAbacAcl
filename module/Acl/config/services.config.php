@@ -14,10 +14,8 @@ return array(
 		'Acl\Form\Import\InputFilter' => 'Acl\Model\Form\ImportFormInputFilter',
 		'Acl\Wrapper\User' => 'Acl\Model\Wrapper\UserWrapper',
 		'Acl\Wrapper\Attribute' => 'Acl\Model\Wrapper\AttributeWrapper',
-		'Acl\Wrapper\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinitionWrapper',
 		'Acl\Import\Adapter\CsvFile' => 'Acl\Model\Import\CsvFileImportAdapter',
 		'Acl\Import\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinition',
-		'Acl\Import\Validator\UniqueValue' => 'Acl\Model\Import\UniqueValue',
 	),
 	'factories' => array(
 		'Acl\Authentication\Adapter' => function($sm) {
@@ -174,16 +172,21 @@ return array(
 			$namespace = 'Zend\Acl\RouteForwarding';
 			return new \Zend\Session\Container($namespace);
 		},
-		'Acl\Import\User\Validator' => function($sm) {
-			$wrapper = $sm->get('Acl\Wrapper\ColumnDefinition');
-
-			$validator = new \Acl\Model\Import\ImportValidator();
-			$validator
-				->setColumnDefinitionWrapper($wrapper)
-				->addColumnDefinition($sm->get('Acl\Import\ColumnDefinition\Identity'))
+		'Acl\Import\ColumDefinition\Identity\ValidatorChain' => function($sm) {
+			$chain = new \Zend\Validator\ValidatorChain();
+			$chain
+				->attachByName(
+					'NotEmpty',
+					array(
+						'messages' => array(
+							\Zend\Validator\NotEmpty::IS_EMPTY => 'Value for [identity] column is required and cannot be empty',
+						),
+					),
+					true
+				)
 			;
 
-			return $validator;
+			return $chain;
 		},
 		'Acl\Import\ColumnDefinition\Identity' => function($sm) {
 			$validator = $sm->get('Acl\Import\ColumDefinition\Identity\ValidatorChain');
@@ -195,21 +198,50 @@ return array(
 				'required' => true,
 			));
 		},
-		'Acl\Import\ColumDefinition\Identity\ValidatorChain' => function($sm) {
-			/*
-			 * using a clone with a cleared cache to make certain that the values are only
-			 * being compared to other values in this data domain
-			 */
-			$uniqueValidator = clone $sm->get('Acl\Import\Validator\UniqueValue');
-			$uniqueValidator->clearCache();
+		'Acl\Import\ColumnDefinition\UniqueIdentity' => function($sm) {
+			$uniqueValidator = new \Acl\Model\Import\UniqueValueValidator();
+
+			$definition = $sm->get('Acl\Import\ColumnDefinition\Identity');
+			$definition->getValidator()->attach($uniqueValidator);
+
+			return $definition;
+		},
+		'Acl\Import\ColumDefinition\Credential\ValidatorChain' => function($sm) {
 
 			$chain = new \Zend\Validator\ValidatorChain();
 			$chain
-				->attachByName('NotEmpty', array(), true)
-				->attach($uniqueValidator, true)
+				->attachByName(
+					'NotEmpty',
+					array(
+						'messages' => array(
+							\Zend\Validator\NotEmpty::IS_EMPTY => 'Value for [credential] column is required and cannot be empty',
+						),
+					),
+					true
+				)
 			;
 
 			return $chain;
+		},
+		'Acl\Import\ColumnDefinition\Credential' => function($sm) {
+			$validator = $sm->get('Acl\Import\ColumDefinition\Credential\ValidatorChain');
+			$factory = $sm->get('Acl\Factory\ColumnDefinition');
+
+			return $factory->createInstance(array(
+				'name' => 'credential',
+				'validator' => $validator,
+				'required' => true,
+			));
+		},
+		'Acl\Import\User\Validator' => function($sm) {
+
+			$validator = new \Acl\Model\Import\ImportValidator();
+			$validator
+				->addColumnDefinition($sm->get('Acl\Import\ColumnDefinition\UniqueIdentity'))
+				->addColumnDefinition($sm->get('Acl\Import\ColumnDefinition\Credential'))
+			;
+
+			return $validator;
 		},
 		'Acl\Import\User' => function($sm) {
 			$manager = $sm->get('Acl\Entity\Manager');
@@ -229,6 +261,44 @@ return array(
 
 			return $import;
 		},
+
+		'Acl\Import\ColumDefinition\AttributeName\ValidatorChain' => function($sm) {
+
+			$chain = new \Zend\Validator\ValidatorChain();
+			$chain
+				->attachByName(
+					'NotEmpty',
+					array(
+						'messages' => array(
+							\Zend\Validator\NotEmpty::IS_EMPTY => 'Value for [name] column is required and cannot be empty',
+						),
+					),
+					true
+				)
+			;
+
+			return $chain;
+		},
+		'Acl\Import\ColumnDefinition\AttributeName' => function($sm) {
+			$validator = $sm->get('Acl\Import\ColumDefinition\AttributeName\ValidatorChain');
+			$factory = $sm->get('Acl\Factory\ColumnDefinition');
+
+			return $factory->createInstance(array(
+				'name' => 'name',
+				'validator' => $validator,
+				'required' => true,
+			));
+		},
+		'Acl\Import\Attribute\Validator' => function($sm) {
+
+			$validator = new \Acl\Model\Import\ImportValidator();
+			$validator
+				->addColumnDefinition($sm->get('Acl\Import\ColumnDefinition\Identity'))
+				->addColumnDefinition($sm->get('Acl\Import\ColumnDefinition\AttributeName'))
+			;
+
+			return $validator;
+		},
 		'Acl\Import\Attribute' => function($sm) {
 			$manager = $sm->get('Acl\Entity\Manager');
 			$factory = $sm->get('Acl\Factory\Attribute');
@@ -236,7 +306,7 @@ return array(
 			$adapter = $sm->get('Acl\Import\Adapter\CsvFile');
 			$validator = $sm->get('Acl\Import\Attribute\Validator');
 
-			$import = new \Acl\Model\Import\EntityImport();
+			$import = new \Acl\Model\Import\AttributeEntityImport();
 			$import
 				->setManager($manager)
 				->setFactory($factory)

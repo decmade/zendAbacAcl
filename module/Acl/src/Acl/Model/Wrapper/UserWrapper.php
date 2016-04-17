@@ -95,10 +95,31 @@ class UserWrapper extends AbstractEntityWrapper
 		$attributes = $this->getAttributes();
 
 		$filter = function($attribute) use ($name) {
-			return ($attribute->getName() == $name);
+			return ($attribute->getRemoved() == null && $attribute->getName() == $name);
 		};
 
-		return array_filter($attributes, $filter);
+		$results = array_filter($attributes, $filter);
+
+		switch(count($results)) {
+			case 0 :
+				return null;
+				break;
+			case 1 :
+				$result = current($results);
+				return $result->getValue();
+				break;
+			default :
+				/*
+				 * this should never happen with the way attributes
+				 * are declared as unique by the AttributeWrapper
+				 * class, but just in case
+				 */
+				$output = array();
+				foreach($results as $result) {
+					$output[] = $result->getValue();
+				}
+				return implode(',', $results);
+		}
 	}
 
 	/**

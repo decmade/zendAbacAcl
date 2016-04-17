@@ -64,7 +64,7 @@ class AttributeController extends AbstractEntityController
 
     	$request = $this->getRequest();
     	$form = $this->importForm;
-    	$import = $this->attribiteImport;
+    	$import = $this->attributeImport;
 
    		$tmpFile = null;
    		$options = array();

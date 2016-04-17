@@ -54,7 +54,7 @@ return array(
 			$wrapper = $sm->get('Acl\Wrapper\Attribute');
 			$attributeImport = $sm->get('Acl\Import\Attribute');
 			$importForm = $sm->get('Acl\Form\Import');
-			$controller = new \Acl\Controller\UserController();
+			$controller = new \Acl\Controller\AttributeController();
 			$controller
 				->setEntityManager($em)
 				->setFactory($factory)

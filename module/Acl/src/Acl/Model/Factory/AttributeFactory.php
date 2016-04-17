@@ -17,7 +17,7 @@ class AttributeFactory extends AbstractEntityFactory
 
 			switch($param) {
 				case 'name' :
-					$attribute>setName($value);
+					$attribute->setName($value);
 					break;
 				case 'value' :
 					$attribute->setValue($value);

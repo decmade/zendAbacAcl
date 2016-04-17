@@ -2,23 +2,14 @@
 namespace Acl\Model\Import;
 
 
-use Acl\Model\DependentObjectTrait;
-
 class ImportValidator implements ImportValidatorInterface
 {
-	use DependentObjectTrait;
 
 	/**
 	 *
 	 * @var array
 	 */
 	private $columnDefinitions;
-
-	/**
-	 *
-	 * @var ColumnDefinitionWrapper $columnDefinitionWrapper
-	 */
-	private $columnDefinitionWrapper;
 
 	/**
 	 *
@@ -40,23 +31,12 @@ class ImportValidator implements ImportValidatorInterface
 	 *
 	 * @return self
 	 */
-	public function addColumnDefinition(ColumnDefinition $definition)
+	public function addColumnDefinition(ColumnDefinitionInterface $definition)
 	{
 		$this->columnDefinitions[] = $definition;
 		return $this;
 	}
 
-	/**
-	 *
-	 * @param ColumnDefinitionWrapper $wrapper
-	 *
-	 * @return self
-	 */
-	public function setColumnDefinitionWrapper(ColumnDefinitionWrapper $wrapper)
-	{
-		$this->columnDefinitionWrapper = $wrapper;
-		return $this;
-	}
 
 	/**
 	 * get error messages that are populated with causes for
@@ -76,14 +56,6 @@ class ImportValidator implements ImportValidatorInterface
 	public function isValid(array $data)
 	{
 		/*
-		 * run dependency check
-		 */
-		$this->checkDependencies();
-
-		$wrapper = $this->columnDefinitionWrapper;
-
-
-		/*
 		 * reset error message cache
 		 */
 		$this->messages = array();
@@ -97,20 +69,15 @@ class ImportValidator implements ImportValidatorInterface
 			 * for each column
 			 */
 			foreach($this->columnDefinitions as $definition) {
-				/*
-				 * enclose the defintion in its facade wrapper
-				 * class
-				 */
-				$wrapper->setDefinition($definition);
 
 				switch(true) {
-					case ( !array_key_exists($wrapper->getName(), $row) || empty($row[$wrapper->getName()]) ) :
-						if ($wrapper->getIsRequired()) {
-							$this->messages[] = sprintf("missing column [%s] @ row %s", $wrapper->getName(), $rowCounter);
+					case ( !array_key_exists($definition->getName(), $row ) ) :
+						if ($definition->getIsRequired()) {
+							$this->messages[] = sprintf("missing required column [%s] @ row %s", $definition->getName(), $rowCounter);
 						}
 						break;
-					case ( !$wrapper->isValid($row[$wrapper->getName()])) :
-						foreach($wrapper->getValidator()->getMessages() as $message) {
+					case ( !$definition->isValid($row[$definition->getName()])) :
+						foreach($definition->getValidator()->getMessages() as $message) {
 							$this->messages[] = sprintf("%s @ row %s", $message, $rowCounter);
 						}
 						break;
@@ -118,37 +85,16 @@ class ImportValidator implements ImportValidatorInterface
 			}
 		}
 
-		return (count($this->messages) == 0);
+		if (count($this->messages) > 0) {
+			$this->messages[] = 'Import file failed validation and was not processed';
+			return false;
+		} else {
+			return true;
+		}
 	}
 
-	/**
-	 * validate the data in the row that matches the columnDefinition
-	 * with the same name against the ColumnDefinition's validator
-	 *
-	 * @param array $row
-	 * @param ColumnDefinitionWrapper $definition
-	 */
-	private function rowDataIsValidForColumn(array $row, ColumnDefinitionWrapper $definition)
-	{
-		$value = $row[$definition->getName()];
 
-		return $definition->isValid($value);
-	}
 
-	/**
-	 * get dependencies configuration for DependentObjectTrait
-	 *
-	 * @return array
-	 */
-	protected function getDependenciesConfig()
-	{
-		return array(
-			array(
-				'name' => 'Acl\Model\Import\ColumnDefinitionWrapper',
-				'object' => $this->columnDefinitionWrapper,
-			),
-		);
-	}
 
 
 }

@@ -11,7 +11,7 @@ class ColumnDefinitionFactory extends AbstractObjectFactory
 		 */
 		$this->checkDependencies();
 
-		$definition = $this->prototype;
+		$definition = clone $this->prototype;
 
 		foreach($config as $param => $value) {
 			$param = strtolower($param);

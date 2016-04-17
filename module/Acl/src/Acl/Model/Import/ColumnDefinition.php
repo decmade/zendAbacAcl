@@ -15,11 +15,6 @@ class ColumnDefinition implements ColumnDefinitionInterface
 	 */
 	private $name;
 
-	/**
-	 *
-	 * @var int
-	 */
-	private $type;
 
 	/**
 	 *
@@ -71,6 +66,25 @@ class ColumnDefinition implements ColumnDefinitionInterface
 	{
 		$this->validator = $validator;
 		return $this;
+	}
+
+	/**
+	 * checks to see if the value passed is
+	 * valid input for the ColumnDefinition
+	 * injected
+	 *
+	 * @param mixed $value
+	 *
+	 * @return boolean
+	 */
+	public function isValid($value)
+	{
+
+		if ($this->validator) {
+			return $this->validator->isValid($value);
+		} else {
+			return false;
+		}
 	}
 
 	/**

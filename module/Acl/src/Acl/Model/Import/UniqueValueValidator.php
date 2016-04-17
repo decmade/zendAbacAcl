@@ -10,7 +10,7 @@ use Zend\Validator\AbstractValidator;
  * @author John W. Brown, Jr. <john.w.brown.jr@gmail.com>
  *
  */
-class UniqueValue extends AbstractValidator
+class UniqueValueValidator extends AbstractValidator
 {
 	const NOT_UNIQUE = "not-unique";
 

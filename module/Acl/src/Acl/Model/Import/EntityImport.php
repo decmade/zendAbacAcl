@@ -18,38 +18,38 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @var EntityManagerInterface
 	 */
-	private $manager;
+	protected $manager;
 
 	/**
 	 *
 	 * @var EntityFactoryInterface
 	 */
-	private $factory;
+	protected $factory;
 
 	/**
 	 *
 	 * @var EntityWrapperInterface
 	 */
-	private $wrapper;
+	protected $wrapper;
 
 	/**
 	 *
 	 * @var ImportAdapterInterface
 	 */
-	private $adapter;
+	protected $adapter;
 
 	/**
 	 *
 	 * @var ImportValidatorInterface
 	 */
-	private $validator;
+	protected $validator;
 
 
 	/**
 	 *
 	 * @var array
 	 */
-	private $options;
+	protected $options;
 
 	/**
 	 * used to cache the entity class name through a lazy
@@ -57,7 +57,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @var string
 	 */
-	private $entityClassName;
+	protected $entityClassName;
 
 
 	/**
@@ -192,8 +192,10 @@ class EntityImport implements EntityImportInterface
 		$wrapper = $this->wrapper;
 		$validator = $this->validator;
 		$counts = array(
+			'total' => 0,
 			'added' => 0,
 			'updated' => 0,
+			'skipped' => 0,
 		);
 		$messages = array();
 
@@ -226,7 +228,20 @@ class EntityImport implements EntityImportInterface
 			 * each user according to the data currently in the table
 			 */
 			foreach($data as $row) {
+				$counts['total']++;
+
 				$importedEntity = $this->hydrateEntity($row);
+
+				/*
+				 * if the hydratedEntity function does not return an object,
+				 * something is wrong with the data, so skip this record
+				 */
+				if ($importedEntity == null) {
+					$counts['skipped']++;
+
+					$messages[] = sprintf("skipped record at row #%s", $counts['total'] );
+					continue;
+				}
 
 				$existingEntities = $this->retrieveEntitiesByCriteria(
 					$wrapper
@@ -255,13 +270,9 @@ class EntityImport implements EntityImportInterface
 		}
 
 
-
-		$counts['total'] = $counts['added'] + $counts['updated'];
-
 		return array(
 			'counts' => $counts,
 			'messages' => $messages,
-
 		);
 
 	}
@@ -273,7 +284,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @return boolean
 	 */
-	private function hasOption($name)
+	protected function hasOption($name)
 	{
 		return array_key_exists($name, $this->options);
 	}
@@ -284,7 +295,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @return string
 	 */
-	private function getEntityClassName()
+	protected function getEntityClassName()
 	{
 		if ( $this->entityClassName == null ) {
 			/*
@@ -306,7 +317,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @return self
 	 */
-	private function processOptionsArray(array $options)
+	protected function processOptionsArray(array $options)
 	{
 		foreach($options as $name=>$value) {
 			$this->setOption($name, $value);
@@ -321,7 +332,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @return EntityInterface
 	 */
-	private function hydrateEntity(array $config)
+	protected function hydrateEntity(array $config)
 	{
 		/*
 		 * run dependency check
@@ -337,7 +348,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @return EntityInterface
 	 */
-	private function retrieveEntitiesByCriteria(array $criteria)
+	protected function retrieveEntitiesByCriteria(array $criteria)
 	{
 		/*
 		 * run dependency check
@@ -352,7 +363,7 @@ class EntityImport implements EntityImportInterface
 	/**
 	 * sets the Removed date on all entities, marking them to be ignored going forward
 	 */
-	private function removeExistingEntities()
+	protected function removeExistingEntities()
 	{
 		/*
 		 * run dependency check
@@ -376,7 +387,7 @@ class EntityImport implements EntityImportInterface
 	 *
 	 * @param mized $source
 	 */
-	private function getDataFromAdapter($source)
+	protected function getDataFromAdapter($source)
 	{
 		/*
 		 * run dependency check

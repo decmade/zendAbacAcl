@@ -34,6 +34,17 @@ interface ColumnDefinitionInterface
 	 */
 	public function setValidator(ValidatorInterface $validator);
 
+		/**
+	 * checks to see if the value passed is
+	 * valid input for the ColumnDefinition
+	 * injected
+	 *
+	 * @param mixed $value
+	 *
+	 * @return boolean
+	 */
+	public function isValid($value);
+
 	/**
 	 * @return bool
 	 */
