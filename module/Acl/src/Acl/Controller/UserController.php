@@ -331,12 +331,13 @@ class UserController extends AbstractEntityController
 
 		$prg = $this->fileprg($form);
 
+
+
 		switch(true) {
     		case ( $prg instanceof Response) :
     			return $prg;
     			break;
     		case ( is_array($prg)) :
-
     			if ($form->isValid()) {
     				$data = $form->getData();
     				$tmpFile = $data['uploadFile']['tmp_name'];
@@ -346,6 +347,7 @@ class UserController extends AbstractEntityController
     			} else {
     				$fileInput = $form->get('uploadFile');
     				$errors = $fileInput->getMessages();
+    				$tmpFile = $fileInput->getValue()['tmp_name'];
 
     				if (!empty($errors)) {
 						foreach($form->get('uploadFile')->getMessages() as $message) {
@@ -353,12 +355,12 @@ class UserController extends AbstractEntityController
 						}
 						$this->redirect()->toRoute('acl/import');
    					}
-
    				}
    				break;
    		}
 
    	   	$results = $import->import($tmpFile, $options);
+
    	   	unlink($tmpFile);
 
    	   	return $results;

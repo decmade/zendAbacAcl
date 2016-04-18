@@ -1,35 +1,20 @@
 <?php
-	$form = $this->form->prepare();
-	$form->setAttribute('class', 'form-horizontal');
-
-	foreach($form->getElements() as $element) {
-		/*
-		 * controls how far the form indents into
-		 * the page using Twitter:Bootstrap CSS
-		 *
-		 */
-		$defLabelAttributes = array(
-			'class' => 'control-label col-md-2',
-		);
-
-		/*
-		 * default class for all input controls
-		 * for the Twitter:Bootstrap CSS framework
-		 * to apply standard styling
-		 */
-		$defElementClass = 'form-control';
-
-		$element->setLabelAttributes( $defLabelAttributes);
-		$element->setAttribute('class', $defElementClass);
-		$element->setAttribute('id', $element->getName());
-	}
+	/*
+	 * add default Bootstrap formatting to the form object
+	 * and prepare() for the view
+	 */
+	$form = $this->addBootstrapFormAttributes($this->form)->prepare();
 
 	/*
-	 * the submit button is a little different, it uses
-	 * a button class to proper rendering
+	 * custom view helper that converts the values of a select
+	 * list input into url's using the $this->url() veiw helper
 	 *
+	 * this allows you to make this select list a form
+	 * processing switcher. routes are specified in the form
+	 * definition
 	 */
-	$form->get('submit')->setAttribute('class', 'btn btn-success');
+	$this->convertRouteSelectListToUrl($form->get('uploadType'));
+
 
 
 	$defaultHeadingColumnWidth = 2;
@@ -118,6 +103,7 @@
 		$('input[type="file"]')
 			.removeClass('form-control')
 			.addClass('file');
+
 
 		$(fileTypeInput).change( function() {
 			$('#import').attr('action', $(fileTypeInput).val());

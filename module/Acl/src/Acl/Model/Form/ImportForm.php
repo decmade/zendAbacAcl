@@ -17,9 +17,19 @@ class ImportForm extends Form
 			'type' => 'select',
 			'options' => array(
 				'label' => 'Import Type',
+				/*
+				 * these are routes that point to the controller::action
+				 * where the form will be sent to be processes
+				 *
+				 * there is view helper (Acl\Model\View\ConvertRouteSelectListToUrl) that
+				 * converts each route to a URL using the $this->url() view helper
+				 *
+				 * this is one of the places where i wish that instead of making code
+				 * only accessible through the view
+				 */
 				'value_options' => array(
-					'/acl/user/import' => 'Users',
-					'/acl/attribute/import' => 'Attributes',
+					'acl/user/import' => 'Users',
+					'acl/attribute/import' => 'Attributes',
 				),
 			),
 			'attributes' => array(

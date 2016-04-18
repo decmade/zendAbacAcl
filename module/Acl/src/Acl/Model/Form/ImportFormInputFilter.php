@@ -29,14 +29,17 @@ class ImportFormInputFilter extends InputFilter
 // 				array('name' => 'Zend\I18n\Filter\Alnum'),	// each Zend\I18n\Filter component requires the intl PHP extension
 			),
 			'validators' => array(
-				array(
-					'name' => 'FileMimeType',
-					'options' => array(
-						'mimeType' => 'text/plain',
-						'messages' => array(
-						),
-					),
-				),
+// 				array(
+// 						/*
+// 						 * not dependable across different browsers
+// 						 */
+// 					'name' => 'FileMimeType',
+// 					'options' => array(
+// 						'mimeType' => 'text/plain',
+// 						'messages' => array(
+// 						),
+// 					),
+// 				),
 			),
 		));
 

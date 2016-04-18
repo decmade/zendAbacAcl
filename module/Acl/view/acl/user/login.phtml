@@ -1,36 +1,10 @@
 <?php
-	$form = $this->form->prepare();
-	$form->setAttribute('action', $this->url('acl/user/authenticate'));
-	$form->setAttribute('class', 'form-horizontal');
-
-	foreach($form->getElements() as $element) {
 		/*
-		 * controls how far the form indents into
-		 * the page using Twitter:Bootstrap CSS
-		 *
-		 */
-		$defLabelAttributes = array(
-			'class' => 'control-label col-md-2',
-		);
-
-		/*
-		 * default class for all input controls
-		 * for the Twitter:Bootstrap CSS framework
-		 * to apply standard styling
-		 */
-		$defElementClass = 'form-control';
-
-		$element->setLabelAttributes( $defLabelAttributes);
-		$element->setAttribute('class', $defElementClass);
-		$element->setAttribute('id', $element->getName());
-	}
-
-	/*
-	 * the submit button is a little different, it uses
-	 * a button class to proper rendering
-	 *
+	 * add default Bootstrap formatting to the form object
+	 * and prepare() for the view
 	 */
-	$form->get('submit')->setAttribute('class', 'btn btn-success');
+	$form = $this->addBootstrapFormAttributes($this->form)->prepare();
+	$form->setAttribute('action', $this->url('acl/user/authenticate'));
 
 	$defaultInputColumnWidth = 3;
 

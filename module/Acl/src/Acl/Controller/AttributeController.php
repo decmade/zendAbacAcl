@@ -85,6 +85,7 @@ class AttributeController extends AbstractEntityController
     				);
     			} else {
     				$fileInput = $form->get('uploadFile');
+    				$tmpFile = $fileInput->getValue()['tmp_name'];
     				$errors = $fileInput->getMessages();
 
     				if (!empty($errors)) {

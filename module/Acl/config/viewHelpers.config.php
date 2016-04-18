@@ -3,6 +3,8 @@ return array(
 	'aliases' => array(
 	),
 	'invokables' => array(
+		'addBootstrapFormAttributes' => 'Acl\Model\View\AddBootstrapFormAttributes',
+		'convertRouteSelectListToUrl' => 'Acl\Model\View\ConvertRouteSelectListToUrl',
 	),
 	'factories' => array(
 		'currentUser' => function($serviceLocator) {
