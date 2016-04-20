@@ -102,7 +102,7 @@ class AttributeController extends AbstractEntityController
    	   	if (is_file($tmpFile) ) {
 			$results = $import->import($tmpFile, $options);
    	   		unlink($tmpFile);
-
+			return $results;
    	   	} else {
    	   		$this->queueMessage('No file was uploaded', 'error');
    	   		$this->redirect()->toRoute('acl/import');
