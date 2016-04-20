@@ -99,8 +99,14 @@ class AttributeController extends AbstractEntityController
    				break;
    		}
 
-   	   	$results = $import->import($tmpFile, $options);
-   	   	unlink($tmpFile);
+   	   	if (is_file($tmpFile) ) {
+			$results = $import->import($tmpFile, $options);
+   	   		unlink($tmpFile);
+
+   	   	} else {
+   	   		$this->queueMessage('No file was uploaded', 'error');
+   	   		$this->redirect()->toRoute('acl/import');
+   	   	}
 
    	   	return $results;
 
@@ -135,7 +141,7 @@ class AttributeController extends AbstractEntityController
 	 */
 	private function queueMessage($message, $messageType = 'info')
 	{
-		$this->flashMessenger()->addMessage($message, $messageType);
+		$this->flashMessenger()->setNamespace($messageType)->addMessage($message);
 
 	}
 }

@@ -356,15 +356,18 @@ class UserController extends AbstractEntityController
 						$this->redirect()->toRoute('acl/import');
    					}
    				}
+
    				break;
    		}
 
-   	   	$results = $import->import($tmpFile, $options);
+		if (is_file($tmpFile) ) {
+			$results = $import->import($tmpFile, $options);
+   	   		unlink($tmpFile);
 
-   	   	unlink($tmpFile);
-
-   	   	return $results;
-
+   	   	} else {
+   	   		$this->queueMessage('No file was uploaded', 'error');
+   	   		$this->redirect()->toRoute('acl/import');
+   	   	}
 	}
 
 	/**
@@ -523,7 +526,7 @@ class UserController extends AbstractEntityController
 	 */
 	private function queueMessage($message, $messageType = 'info')
 	{
-		$this->flashMessenger()->addMessage($message, $messageType);
+		$this->flashMessenger()->setNamespace($messageType)->addMessage($message);
 
 	}
 }
