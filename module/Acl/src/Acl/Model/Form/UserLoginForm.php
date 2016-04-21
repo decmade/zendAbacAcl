@@ -44,7 +44,7 @@ class UserLoginForm extends Form
 			'name' => 'submit',
 			'type' => 'submit',
 			'attributes' => array(
-				'value' => 'Login',
+				'value' => 'Sign In',
 			),
 		));
 	}

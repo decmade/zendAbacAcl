@@ -20,7 +20,7 @@ return array(
 							"a.name = 'sitecode' AND a.value LIKE '74%'",
 						),
 						array(
-							"a.name = 'developer' AND a.value = '1'",
+							"a.name = 'siteadministrator' AND a.value = '1'",
 						),
 					),
 				),
