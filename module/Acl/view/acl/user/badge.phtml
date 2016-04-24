@@ -45,6 +45,12 @@
 				'icon' => 'glyphicon glyphicon-folder-open',
 				'url' => $this->url('acl/import'),
 			);
+
+			$dropdownActions[] = array(
+				'label' => 'Users',
+				'icon' => 'glyphicon glyphicon-th-list',
+				'url' => $this->url('acl/user/list'),
+			);
 		}
 
 		$dropdownActions[] = array(); // an empty array creates a divider

@@ -260,6 +260,17 @@ class UserController extends AbstractEntityController
 		$this->checkDependencies('getLocalDependenciesConfig');
 
 		$authService = $this->authenticationService;
+		$currentUser = $this->getCurrentUser();
+
+		/*
+		 * if the current user is a site administrator
+		 * you can accept the request for other users
+		 */
+		if ( $this->isSiteAdmin($currentUser) ) {
+			$userId = $this->params()->fromRoute('userid');
+		} else {
+			$userId = null;
+		}
 
 		/*
 		 * if user is not authenticated, send to
@@ -268,6 +279,7 @@ class UserController extends AbstractEntityController
 		if ($authService->hasIdentity()) {
 			return array(
 				'form' => $this->profileForm,
+				'user' => ( empty($userId) ) ? $this->getCurrentUser() : $this->getUserWithId($userId),
 			);
 		} else {
 			return $this->redirect()->toRoute('home');
@@ -289,7 +301,18 @@ class UserController extends AbstractEntityController
 
 		$em = $this->entityManager;
 		$form = $this->profileForm;
-		$user = $this->getCurrentUser();
+		$currentUser = $this->getCurrentUser();
+
+		/*
+		 * if the current user is a site administrator
+		 * you can accept the request for other users
+		 */
+		if ($this->isSiteAdmin($currentUser)) {
+			$userId = $this->params()->fromRoute('userid');
+			$user = $this->getUserWithId($userId);
+		} else {
+			$user = $currentUser;
+		}
 
 		$form->setData($this->params()->fromPost());
 
@@ -309,7 +332,9 @@ class UserController extends AbstractEntityController
 			$this->queueMessage(sprintf("User %s's Password Was Not Updated.", $user->getIdentity()), 'info');
 		}
 
-		$this->redirect()->toRoute('acl/user/edit');
+		$this->redirect()->toRoute('acl/user/edit', array(
+			'userid' => $user->getId(),
+		));
 	}
 
 	/**
@@ -325,6 +350,7 @@ class UserController extends AbstractEntityController
     	$request = $this->getRequest();
     	$form = $this->importForm;
     	$import = $this->userImport;
+    	$user = $this->getCurrentUser();
 
    		$tmpFile = null;
    		$options = array();
@@ -368,6 +394,38 @@ class UserController extends AbstractEntityController
    	   		$this->queueMessage('No file was uploaded', 'error');
    	   		$this->redirect()->toRoute('acl/import');
    	   	}
+	}
+
+	public function listAction()
+	{
+		/*
+		 * run dependency checks
+		 */
+		$this->checkDependencies();
+		$this->checkDependencies('getLocalDependenciesConfig');
+
+		$em = $this->entityManager;
+		$wrapper = $this->wrapper;
+
+		$criteria = array(
+// 			'status' => User::STATUS_ACTIVE,
+			'removed' => null,
+		);
+
+		$orderBy = array(
+			'identity' => 'asc',
+		);
+
+		$users = $em->getRepository(User::getEntityClass())->findBy($criteria, $orderBy);
+
+		$output = array();
+		foreach($users as $user) {
+			$output[] = $wrapper->setEntity($user)->toArray();
+		}
+
+		return array(
+			'users' => json_encode($output),
+		);
 	}
 
 	/**
@@ -483,6 +541,43 @@ class UserController extends AbstractEntityController
 	}
 
 	/**
+	 * retrieves the user with the $id passed
+	 *
+	 * @param integer $id
+	 *
+	 * @return User|NULL
+	 */
+	private function getUserWithId($userId)
+	{
+		/*
+		 * if no value is passed for $userId
+		 * then get the currently authenticated user
+		 */
+		if(!$userId) {
+			return $this->getCurrentUser();
+		}
+
+		/*
+		 * run dependency check
+		 */
+		$this->checkDependencies();
+
+		$authService = $this->authenticationService;
+		$em = $this->entityManager;
+
+		if ($authService->hasIdentity()) {
+			$user = $em->getRepository(User::getEntityClass())->find($userId);
+			return $user;
+		} else {
+			/*
+			 * return the current user if the userId
+			 * is not found
+			 */
+			return $this->getCurrentUser();
+		}
+	}
+
+	/**
 	 *
 	 * @param Form $form
 	 * @param string $type
@@ -496,6 +591,18 @@ class UserController extends AbstractEntityController
 		foreach($form->getMessages() as $message) {
 			$this->queueMessage($message, $type);
 		}
+	}
+	private function isSiteAdmin(User $user)
+	{
+		/*
+		 * run dependency checks
+		 */
+		$this->checkDependencies();
+
+		$wrapper = $this->wrapper;
+		$wrapper->setEntity($user);
+
+		return ( $wrapper->getAttribute('siteadministrator') == true);
 	}
 
 	/**

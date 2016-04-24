@@ -120,7 +120,7 @@ return array(
 						'edit' => array(
 							'type' => 'segment',
 							'options' => array(
-								'route' => '/edit',
+								'route' => '/edit[/:userid]',
 								'defaults' => array(
 									'action' => 'edit',
 									$aclDqlKey => null,
@@ -130,7 +130,7 @@ return array(
 						'save' => array(
 							'type' => 'segment',
 							'options' => array(
-								'route' => '/save',
+								'route' => '/save/:userid',
 								'defaults' => array(
 									'action' => 'save',
 									$aclDqlKey => null,
@@ -143,6 +143,18 @@ return array(
 								'route' => '/import',
 								'defaults' => array(
 									'action' => 'import',
+									$aclDqlKey => array(
+										"a.name = 'siteadministrator' and a.value not in ('','0','false')",
+									),
+								),
+							),
+						),
+						'list' => array(
+							'type' => 'segment',
+							'options' => array(
+								'route' => '/list',
+								'defaults' => array(
+									'action' => 'list',
 									$aclDqlKey => array(
 										"a.name = 'siteadministrator' and a.value not in ('','0','false')",
 									),

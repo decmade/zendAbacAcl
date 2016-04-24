@@ -1,0 +1,80 @@
+<?php
+$users = $this->users;
+
+?>
+<div class="row">
+	<div class="page-title">
+		<h1>Edit User List</h1>
+	</div>
+</div>
+
+<div class="row">
+	<table class="table table-hover" id="userTable">
+		<col width="*" />
+		<col width="15%" />
+		<col width="15%" />
+		<col width="15%" />
+		<thead>
+			<tr>
+				<th>Identity</th>
+				<th>Created</th>
+				<th style="text-align:center;">Status</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			<!--  user data will be inserted here using jquery -->
+		</tbody>
+	</table>
+</div>
+
+<script type="text/javascript">
+	var users = <?php echo $users; ?>
+
+	$(document).ready(function() {
+		$.each(users, function(i, user){
+			var row = '<tr><td>' + user.identity + '</td><td>' + formatJsonObjectDate(user.added) + '</td><td style="text-align:center;">' + displayUserStatus(user.status) + '</td><td>' + displayEditUserButton(user.id) + '</td></tr>'
+			$('#userTable tbody').append(row);
+		});
+	});
+
+	/*
+		format the user status code to display
+		as a badge
+	*/
+	function displayUserStatus(statusCode) {
+		var active = <?php echo \Acl\Entity\User::STATUS_ACTIVE; ?>;
+		var inactive = <?php echo \Acl\Entity\User::STATUS_INACTIVE; ?>;
+
+		switch(statusCode) {
+			case active :
+				return '<span class="badge alert-success">Active</span>';
+				break;
+			case inactive :
+				return '<span class="badge alert-danger">Inactive</span>';
+				break;
+			default :
+				return '<span class="badge alert-warning">Disabled</span>';
+		}
+	}
+
+	/*
+		format the Edit User button for password changes and other
+		user changes on the fly
+	*/
+	function displayEditUserButton(userId) {
+		var editUserUrlPrefix = '<?php echo $this->url('acl/user/edit'); ?>';
+		return '<a href="' + editUserUrlPrefix + '/' + userId + '" class="btn btn-success">Edit User</a>';
+	}
+
+	/*
+		formats the date object passed from within a
+		Json formatted object as a human readable string
+	*/
+	function formatJsonObjectDate(objectDate) {
+		var dateString = objectDate.date;
+		var date = new Date(dateString.substr(0,10));
+
+		return dateString.substr(5,2) + '/' + dateString.substr(8,2) + '/' + dateString.substr(0,4);
+	}
+</script>
