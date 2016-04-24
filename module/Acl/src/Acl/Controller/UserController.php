@@ -266,7 +266,7 @@ class UserController extends AbstractEntityController
 		 * if the current user is a site administrator
 		 * you can accept the request for other users
 		 */
-		if ( $this->isSiteAdmin($currentUser) ) {
+		if ( $currentUser && $this->isSiteAdmin($currentUser) ) {
 			$userId = $this->params()->fromRoute('userid');
 		} else {
 			$userId = null;
@@ -307,7 +307,7 @@ class UserController extends AbstractEntityController
 		 * if the current user is a site administrator
 		 * you can accept the request for other users
 		 */
-		if ($this->isSiteAdmin($currentUser)) {
+		if ($currentUser && $this->isSiteAdmin($currentUser)) {
 			$userId = $this->params()->fromRoute('userid');
 			$user = $this->getUserWithId($userId);
 		} else {
