@@ -31,6 +31,7 @@ class ImportForm extends Form
 					'acl/user/import' => 'Users',
 					'acl/attribute/import' => 'Attributes',
 				),
+				'disable_inarray_validator' => true,
 			),
 			'attributes' => array(
 			),
