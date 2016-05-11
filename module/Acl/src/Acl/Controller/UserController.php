@@ -239,8 +239,10 @@ class UserController extends AbstractEntityController
 		 * queue up a flash message for user feedback
 		 */
 		$user = $this->getCurrentUser();
-		$message = sprintf("User %s Has Signed Out", $user->getIdentity());
-		$this->queueMessage($message, 'info');
+		if ($user) {
+			$message = sprintf("User %s Has Signed Out", $user->getIdentity());
+			$this->queueMessage($message, 'info');
+		}
 
 		$authService->clearIdentity();
 
