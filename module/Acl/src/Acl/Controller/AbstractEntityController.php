@@ -3,11 +3,9 @@ namespace Acl\Controller;
 
 
 
-use Acl\Model\Factory\EntityFactoryInterface;
-use Doctrine\ORM\EntityManagerInterface;
-use Acl\Model\Wrapper\EntityWrapperInterface;
 use Acl\Model\DependentObjectTrait;
 use Zend\Mvc\Controller\AbstractActionController;
+use Acl\Model\Manager\EntityObjectManagerInterface;
 
 abstract class AbstractEntityController extends AbstractActionController
 {
@@ -15,21 +13,10 @@ abstract class AbstractEntityController extends AbstractActionController
 
 	/**
 	 *
-	 * @var EntityManagerInterface
+	 * @var EntityObjectManagerInterface
 	 */
-	protected $entityManager;
+	protected $entityObjectManager;
 
-	/**
-	 *
-	 * @var EntityFactoryInterface $factory
-	 */
-	protected $factory;
-
-	/**
-	 *
-	 * @var EntityWrapperInterface $wrapper
-	 */
-	protected $wrapper;
 
 	/**
 	 *
@@ -37,35 +24,12 @@ abstract class AbstractEntityController extends AbstractActionController
 	 *
 	 * @return @this
 	 */
-	public function setEntityManager(EntityManagerInterface $em)
+	public function setEntityObjectManager(EntityObjectManagerInterface $manager)
 	{
-		$this->entityManager = $em;
+		$this->entityObjectManager = $manager;
 		return $this;
 	}
 
-	/**
-	 *
-	 * @param EntityFactoryInterface $factory
-	 *
-	 * @return $this
-	 */
-	public function setFactory(EntityFactoryInterface $factory)
-	{
-		$this->factory = $factory;
-		return $this;
-	}
-
-	/**
-	 *
-	 * @param EntityWrapperInterface $wrapper
-	 *
-	 * @return $this
-	 */
-	public function setWrapper(EntityWrapperInterface $wrapper)
-	{
-		$this->wrapper = $wrapper;
-		return $this;
-	}
 
 	/**
 	 * @return array
@@ -74,16 +38,8 @@ abstract class AbstractEntityController extends AbstractActionController
 	{
 		return array(
 			array(
-				'name' => 'Doctrine\ORM\EntityManagerInterface',
-				'object' => $this->entityManager,
-			),
-			array(
-				'name' => 'Acl\Model\Factory\EntityFactoryInterface',
-				'object' => $this->factory,
-			),
-			array(
-				'name' => 'Acl\Model\Wrapper\EntityWrapperInterface',
-				'object' => $this->wrapper,
+				'name' => 'Acl\Model\Manager\EntityObjectManagerInterface',
+				'object' => $this->entityObjectManager,
 			),
 		);
 	}

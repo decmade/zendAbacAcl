@@ -17,7 +17,7 @@ interface EntityWrapperInterface
 	 *
 	 * @param EntityInterface $entity
 	 *
-	 * @return $this
+	 * @return self
 	 */
 	public function setEntity(EntityInterface $entity);
 

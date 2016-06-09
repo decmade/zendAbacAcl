@@ -20,9 +20,6 @@ return array(
 		'Acl\Controller\User' => function($serviceLocator) {
 			$sm = $serviceLocator->getServiceLocator();
 
-			$em = $sm->get('Acl\Entity\Manager');
-			$factory = $sm->get('Acl\Factory\User');
-			$wrapper = $sm->get('Acl\Wrapper\User');
 			$loginForm = $sm->get('Acl\Form\UserLogin');
 			$profileForm = $sm->get('Acl\Form\UserProfile');
 			$authService = $sm->get('Acl\Authentication\Service');
@@ -30,11 +27,11 @@ return array(
 			$routeForwardingContainer = $sm->get('Acl\Authentication\Storage\RouteForwarding');
 			$userImport = $sm->get('Acl\Import\User');
 			$importForm = $sm->get('Acl\Form\Import');
+			$manager = $sm->get('Acl\Entity\Manager\User');
+
 			$controller = new \Acl\Controller\UserController();
 			$controller
-				->setEntityManager($em)
-				->setFactory($factory)
-				->setWrapper($wrapper)
+				->setEntityObjectManager($manager)
 				->setLoginForm($loginForm)
 				->setProfileForm($profileForm)
 				->setAuthenticationService($authService)
@@ -49,16 +46,12 @@ return array(
 		'Acl\Controller\Attribute' => function($serviceLocator) {
 			$sm = $serviceLocator->getServiceLocator();
 
-			$em = $sm->get('Acl\Entity\Manager');
-			$factory = $sm->get('Acl\Factory\Attribute');
-			$wrapper = $sm->get('Acl\Wrapper\Attribute');
+			$manager = $sm->get('Acl\Entity\Manager\Attribute');
 			$attributeImport = $sm->get('Acl\Import\Attribute');
 			$importForm = $sm->get('Acl\Form\Import');
 			$controller = new \Acl\Controller\AttributeController();
 			$controller
-				->setEntityManager($em)
-				->setFactory($factory)
-				->setWrapper($wrapper)
+				->setEntityObjectManager($manager)
 				->setAttributeImport($attributeImport)
 				->setImportForm($importForm)
 			;

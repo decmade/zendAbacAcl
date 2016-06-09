@@ -18,6 +18,34 @@ return array(
 		'Acl\Import\ColumnDefinition' => 'Acl\Model\Import\ColumnDefinition',
 	),
 	'factories' => array(
+		'Acl\Entity\Manager\User' => function($sm) {
+			$em = $sm->get('Acl\Entity\Manager');
+			$factory = $sm->get('Acl\Factory\User');
+			$wrapper = $sm->get('Acl\Wrapper\User');
+
+			$manager = new \Acl\Model\Manager\EntityObjectManager();
+			$manager
+				->setEntityManager($em)
+				->setFactory($factory)
+				->setWrapper($wrapper)
+			;
+
+			return $manager;
+		},
+		'Acl\Entity\Manager\Attribute' => function($sm) {
+			$em = $sm->get('Acl\Entity\Manager');
+			$factory = $sm->get('Acl\Factory\Attribute');
+			$wrapper = $sm->get('Acl\Wrapper\Attribute');
+
+			$manager = new \Acl\Model\Manager\EntityObjectManager();
+			$manager
+				->setEntityManager($em)
+				->setFactory($factory)
+				->setWrapper($wrapper)
+			;
+
+			return $manager;
+		},
 		'Acl\Authentication\Adapter' => function($sm) {
 			$entityManager = $sm->get('Acl\Entity\Manager');
 			$resultPrototype = $sm->get('Acl\Authentication\Result');

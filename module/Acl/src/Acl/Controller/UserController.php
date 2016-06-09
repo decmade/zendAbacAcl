@@ -165,9 +165,6 @@ class UserController extends AbstractEntityController
 		 */
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-		$form = $this->loginForm;
-		$savedRoute = $this->routeForwardingContainer;
-
 		return array(
 			'form' => $this->loginForm,
 		);
@@ -237,9 +234,11 @@ class UserController extends AbstractEntityController
 
 		/*
 		 * queue up a flash message for user feedback
+		 * if a user was logged in
 		 */
 		$user = $this->getCurrentUser();
-		if ($user) {
+
+		if ($user != null) {
 			$message = sprintf("User %s Has Signed Out", $user->getIdentity());
 			$this->queueMessage($message, 'info');
 		}
@@ -257,35 +256,28 @@ class UserController extends AbstractEntityController
 	public function editAction()
 	{
 		/*
-		 * check dependencies
+		 * run dependecny checks
 		 */
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-		$authService = $this->authenticationService;
-		$currentUser = $this->getCurrentUser();
+		$form = $this->profileForm;
 
-		/*
-		 * if the current user is a site administrator
-		 * you can accept the request for other users
-		 */
-		if ( $currentUser && $this->isSiteAdmin($currentUser) ) {
-			$userId = $this->params()->fromRoute('userid');
-		} else {
-			$userId = null;
-		}
+		$userId = $this->params()->fromRoute('userid');
+		$targetUser = $this->getUserWithId($userId);
 
-		/*
-		 * if user is not authenticated, send to
-		 * the home route
+
+		/**
+		 * if there is no targetUser returned,
+		 * send to the home router
 		 */
-		if ($authService->hasIdentity()) {
-			return array(
-				'form' => $this->profileForm,
-				'user' => ( empty($userId) ) ? $this->getCurrentUser() : $this->getUserWithId($userId),
-			);
-		} else {
+		if ( $targetUser == null ) {
 			return $this->redirect()->toRoute('home');
 		}
+
+		return array(
+			'form' => $form,
+			'user' => $targetUser,
+		);
 	}
 
 	/**
@@ -301,41 +293,42 @@ class UserController extends AbstractEntityController
 		$this->checkDependencies();
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-		$em = $this->entityManager;
+		$manager = $this->entityObjectManager;
 		$form = $this->profileForm;
-		$currentUser = $this->getCurrentUser();
-
-		/*
-		 * if the current user is a site administrator
-		 * you can accept the request for other users
-		 */
-		if ($currentUser && $this->isSiteAdmin($currentUser)) {
-			$userId = $this->params()->fromRoute('userid');
-			$user = $this->getUserWithId($userId);
-		} else {
-			$user = $currentUser;
-		}
+		$userId = $this->params()->fromRoute('userid');
+		$targetUser = $this->getUserWithId($userId );
 
 		$form->setData($this->params()->fromPost());
 
 		if ($form->isValid()) {
 			$data = $form->getData();
 
-			if ($data['newCredential-1'] == $data['newCredential-2']) {
-				$user->setCredential($data['newCredential-1']);
-				$em->flush();
-				$this->queueMessage(sprintf("User %s's Password Has Been Updated", $user->getIdentity()), 'success');
-			} else {
-				$this->queueMessage(sprintf("New Password and Confirm Password Fields Do Not Match"),'error');
-				$this->queueMessage(sprintf("User %s's Password Was Not Updated.", $user->getIdentity()), 'info');
+			switch(true) {
+				/*
+				 * logic for a detected attempt to change password
+				 */
+				case ( !empty($data['newCredential-1']) ) :
+					if ($data['newCredential-1'] == $data['newCredential-2']) {
+
+						if ($targetUser != null) {
+							$targetUser->setCredential($data['newCredential-1']);
+							$this->queueMessage(sprintf("User %s's Password Has Been Updated", $targetUser->getIdentity()), 'success');
+						}
+
+					} else {
+						$this->queueMessage(sprintf("New Password and Confirm Password Fields Do Not Match"),'error');
+						$this->queueMessage(sprintf("User %s's Password Was Not Updated.", $targetUser->getIdentity()), 'info');
+					}
+					break;
 			}
+
+			$manager->commit();
 		} else {
 			$this->queueFormValidationMessages($form);
-			$this->queueMessage(sprintf("User %s's Password Was Not Updated.", $user->getIdentity()), 'info');
 		}
 
 		$this->redirect()->toRoute('acl/user/edit', array(
-			'userid' => $user->getId(),
+			'userid' => $targetUser->getId(),
 		));
 	}
 
@@ -349,10 +342,8 @@ class UserController extends AbstractEntityController
 		 */
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-    	$request = $this->getRequest();
     	$form = $this->importForm;
     	$import = $this->userImport;
-    	$user = $this->getCurrentUser();
 
    		$tmpFile = null;
    		$options = array();
@@ -406,8 +397,7 @@ class UserController extends AbstractEntityController
 		$this->checkDependencies();
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-		$em = $this->entityManager;
-		$wrapper = $this->wrapper;
+		$manager = $this->entityObjectManager;
 
 		$criteria = array(
 // 			'status' => User::STATUS_ACTIVE,
@@ -418,15 +408,8 @@ class UserController extends AbstractEntityController
 			'identity' => 'asc',
 		);
 
-		$users = $em->getRepository(User::getEntityClass())->findBy($criteria, $orderBy);
-
-		$output = array();
-		foreach($users as $user) {
-			$output[] = $wrapper->setEntity($user)->toArray();
-		}
-
 		return array(
-			'users' => json_encode($output),
+			'users' => $manager->findBy($criteria, $orderBy, $manager::OUTPUT_JSON)
 		);
 	}
 
@@ -529,14 +512,20 @@ class UserController extends AbstractEntityController
 		 * run dependency check
 		 */
 		$this->checkDependencies();
+		$this->checkDependencies('getLocalDependenciesConfig');
 
 		$authService = $this->authenticationService;
-		$em = $this->entityManager;
+		$manager = $this->entityObjectManager;
 
 		if ($authService->hasIdentity()) {
 			$id = $authService->getIdentity();
-			$user = $em->getRepository(User::getEntityClass())->find($id);
-			return $user;
+			$results = $manager->findBy(array('id' => $id));
+
+			if (count($results > 0)) {
+				return $results[0];
+			} else {
+				return null;
+			}
 		} else {
 			return null;
 		}
@@ -552,31 +541,26 @@ class UserController extends AbstractEntityController
 	private function getUserWithId($userId)
 	{
 		/*
-		 * if no value is passed for $userId
-		 * then get the currently authenticated user
-		 */
-		if(!$userId) {
-			return $this->getCurrentUser();
-		}
-
-		/*
 		 * run dependency check
 		 */
 		$this->checkDependencies();
 
-		$authService = $this->authenticationService;
-		$em = $this->entityManager;
+		$manager = $this->entityObjectManager;
 
-		if ($authService->hasIdentity()) {
-			$user = $em->getRepository(User::getEntityClass())->find($userId);
-			return $user;
-		} else {
-			/*
-			 * return the current user if the userId
-			 * is not found
-			 */
-			return $this->getCurrentUser();
+		$currentUser = $this->getCurrentUser();
+
+		switch(true) {
+			case ( $currentUser == null ) :
+			case ( $this->isSiteAdmin($currentUser) == false && $userId != $currentUser->getId() ) :
+				return null;
+			case ( empty($userId) ) :
+				return $currentUser;
+				break;
+			default :
+				return $manager->findOneBy(array('id' => $userId));
+				break;
 		}
+
 	}
 
 	/**
@@ -594,6 +578,13 @@ class UserController extends AbstractEntityController
 			$this->queueMessage($message, $type);
 		}
 	}
+
+	/**
+	 * returns true if the user passed is a site administrator
+	 *
+	 * @param User $user
+	 * @return boolean
+	 */
 	private function isSiteAdmin(User $user)
 	{
 		/*
@@ -601,7 +592,8 @@ class UserController extends AbstractEntityController
 		 */
 		$this->checkDependencies();
 
-		$wrapper = $this->wrapper;
+		$manager = $this->entityObjectManager;
+		$wrapper = $manager->getWrapper();
 		$wrapper->setEntity($user);
 
 		return ( $wrapper->getAttribute('siteadministrator') == true);

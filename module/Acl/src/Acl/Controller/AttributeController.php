@@ -62,7 +62,6 @@ class AttributeController extends AbstractEntityController
 		 */
 		$this->checkDependencies('getLocalDependenciesConfig');
 
-    	$request = $this->getRequest();
     	$form = $this->importForm;
     	$import = $this->attributeImport;
 
