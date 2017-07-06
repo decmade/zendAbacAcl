@@ -36,7 +36,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
      *
      * @see \Doctrine\Common\Persistence\Proxy::__getLazyProperties
      */
-    public static $lazyPropertiesDefaults = array();
+    public static $lazyPropertiesDefaults = [];
 
 
 
@@ -64,10 +64,10 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function __sleep()
     {
         if ($this->__isInitialized__) {
-            return array('__isInitialized__', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'identity', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'credential', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'status', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'attributes', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'sessions');
+            return ['__isInitialized__', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'identity', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'credential', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'status', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'attributes', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'sessions'];
         }
 
-        return array('__isInitialized__', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'identity', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'credential', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'status', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'attributes', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'sessions');
+        return ['__isInitialized__', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'identity', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'credential', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'status', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'attributes', '' . "\0" . 'Acl\\Entity\\User' . "\0" . 'sessions'];
     }
 
     /**
@@ -97,7 +97,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
      */
     public function __clone()
     {
-        $this->__cloner__ && $this->__cloner__->__invoke($this, '__clone', array());
+        $this->__cloner__ && $this->__cloner__->__invoke($this, '__clone', []);
     }
 
     /**
@@ -105,7 +105,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
      */
     public function __load()
     {
-        $this->__initializer__ && $this->__initializer__->__invoke($this, '__load', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, '__load', []);
     }
 
     /**
@@ -179,7 +179,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function getIdentity()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getIdentity', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getIdentity', []);
 
         return parent::getIdentity();
     }
@@ -190,7 +190,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function setIdentity($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setIdentity', array($value));
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setIdentity', [$value]);
 
         return parent::setIdentity($value);
     }
@@ -201,7 +201,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function checkCredential($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'checkCredential', array($value));
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'checkCredential', [$value]);
 
         return parent::checkCredential($value);
     }
@@ -212,7 +212,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function setCredential($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setCredential', array($value));
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setCredential', [$value]);
 
         return parent::setCredential($value);
     }
@@ -223,7 +223,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function getStatus()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getStatus', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getStatus', []);
 
         return parent::getStatus();
     }
@@ -234,7 +234,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function setStatus($value)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStatus', array($value));
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setStatus', [$value]);
 
         return parent::setStatus($value);
     }
@@ -245,7 +245,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function addAttribute(\Acl\Entity\Attribute $attribute)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'addAttribute', array($attribute));
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'addAttribute', [$attribute]);
 
         return parent::addAttribute($attribute);
     }
@@ -256,7 +256,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function getAttributes()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getAttributes', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getAttributes', []);
 
         return parent::getAttributes();
     }
@@ -267,7 +267,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function addSession(\Acl\Entity\Session $session)
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'addSession', array($session));
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'addSession', [$session]);
 
         return parent::addSession($session);
     }
@@ -278,7 +278,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function getSessions()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getSessions', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getSessions', []);
 
         return parent::getSessions();
     }
@@ -293,7 +293,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
         }
 
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getId', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getId', []);
 
         return parent::getId();
     }
@@ -304,7 +304,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function getAdded()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getAdded', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getAdded', []);
 
         return parent::getAdded();
     }
@@ -315,7 +315,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function getRemoved()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getRemoved', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'getRemoved', []);
 
         return parent::getRemoved();
     }
@@ -326,7 +326,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function setRemoved()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setRemoved', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'setRemoved', []);
 
         return parent::setRemoved();
     }
@@ -337,7 +337,7 @@ class User extends \Acl\Entity\User implements \Doctrine\ORM\Proxy\Proxy
     public function clearRemoved()
     {
 
-        $this->__initializer__ && $this->__initializer__->__invoke($this, 'clearRemoved', array());
+        $this->__initializer__ && $this->__initializer__->__invoke($this, 'clearRemoved', []);
 
         return parent::clearRemoved();
     }

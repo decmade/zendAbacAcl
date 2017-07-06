@@ -147,7 +147,7 @@ return array(
 
 			$factory = new \Acl\Model\Factory\AttributeFactory();
 			$factory
-				->setPrototype($attribute);
+				->setEntityPrototype($attribute);
 
 			return $factory;
 		},
@@ -156,7 +156,7 @@ return array(
 
 			$factory = new \Acl\Model\Factory\UserFactory();
 			$factory
-				->setPrototype($user);
+				->setEntityPrototype($user);
 
 			return $factory;
 		},

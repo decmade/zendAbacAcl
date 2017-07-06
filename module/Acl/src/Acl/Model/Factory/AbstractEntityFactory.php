@@ -12,9 +12,9 @@ abstract Class AbstractEntityFactory extends AbstractObjectFactory implements En
 	 *
 	 * @return $this
 	 */
-	public function setPrototype(EntityInterface $entity)
+	public function setEntityPrototype(EntityInterface $entity)
 	{
-		$this->prototype = $entity;
+		$this->setPrototype( $entity );
 		return $this;
 	}
 

@@ -11,7 +11,7 @@ interface EntityFactoryInterface
 	 *
 	 * @return $this
 	 */
-	public function setPrototype(EntityInterface $entity);
+	public function setEntityPrototype(EntityInterface $entity);
 
 	/**
 	 * @return EntityInterface
